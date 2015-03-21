@@ -1,0 +1,12 @@
+﻿Build started 1/27/2015 10:20:31 AM.
+     1>Project "\\banner.main.ad.rit.edu\students\djl1005\IGMProfile\Desktop\DirectX11_Starter\DirectX11_Starter\DirectX11_Starter.vcxproj" on node 2 (Build target(s)).
+     1>FxCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /Fo "\\banner.main.ad.rit.edu\students\djl1005\IGMProfile\Desktop\DirectX11_Starter\Release\PixelShader.cso" Shaders\PixelShader.hlsl 
+     1>\\banner.main.ad.rit.edu\students\djl1005\IGMProfile\Desktop\DirectX11_Starter\DirectX11_Starter\Shaders\PixelShader.hlsl(11,34-44): error X4502: invalid vs_2_0 output semantic 'SV_TARGET'
+         
+         compilation failed; no code produced
+     1>Done Building Project "\\banner.main.ad.rit.edu\students\djl1005\IGMProfile\Desktop\DirectX11_Starter\DirectX11_Starter\DirectX11_Starter.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.28
