@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Camera.h"
+#include "OBB.h"
 
 using namespace DirectX;
 
@@ -41,6 +42,8 @@ private:
 	XMFLOAT3 position;
 	XMFLOAT3 scale;
 	XMFLOAT3 rotiation;
+
+	OBB colider;
 
 	Mesh * mesh;
 	Material * material;

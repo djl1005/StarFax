@@ -102,6 +102,8 @@ void GameEntity::calcWorld()
 
 		XMStoreFloat4x4(&world, XMMatrixTranspose(W));
 
+		colider.updateSat(this->position, this->rotiation);
+
 		hasChanged = false;
 	}
 

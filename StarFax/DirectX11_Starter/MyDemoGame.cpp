@@ -198,7 +198,7 @@ void MyDemoGame::UpdateScene(float dt)
 	// Take input, update game logic, etc.
 	entity.calcWorld();
 	//entity.offsetPosition(1 * dt, 0, 0);
-	entity.offsetRotation(0, 0,  3 * dt);
+//	entity.offsetRotation(0, 0,  3 * dt);
 
 	entity.setPosition(0, 0, 3);
 
