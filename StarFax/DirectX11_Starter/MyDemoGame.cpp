@@ -103,7 +103,7 @@ bool MyDemoGame::Init()
 	dlight2.DiffuseColor = XMFLOAT4(0, .25, 0, 1);
 	dlight2.Direction = XMFLOAT3(-.5, 0, 1);
 
-	entity = GameEntity(mesh1, mat1);
+	entity = Player(mesh1, mat1, cam);
 
 	// Successfully initialized
 	return true;
@@ -198,10 +198,9 @@ void MyDemoGame::UpdateScene(float dt)
 	// Take input, update game logic, etc.
 	entity.calcWorld();
 	//entity.offsetPosition(1 * dt, 0, 0);
-//	entity.offsetRotation(0, 0,  3 * dt);
-
-	entity.setPosition(0, 0, 3);
-
+	//entity.offsetRotation(0, 0,  3 * dt);
+	//entity.setPosition(0, 0, 3);
+	entity.Move(dt);
 	cam->update(dt);
 
 

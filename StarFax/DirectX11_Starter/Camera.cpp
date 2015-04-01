@@ -67,13 +67,14 @@ void Camera::update(float dt)
 
 	view = XMVector3Rotate(z, view);
 
-
+	/*
 	if (GetAsyncKeyState('W') & 0x8000){ p += (XMVector3Normalize(view) * speed *dt);}
 	if (GetAsyncKeyState('S') & 0x8000) { p += (XMVector3Normalize(view) * -speed*dt); }
 	if (GetAsyncKeyState('A') & 0x8000) { p += (XMVector3Cross(view, up) * speed*dt); }
 	if (GetAsyncKeyState('D') & 0x8000) { p += (XMVector3Cross(view, up) * -speed*dt); }
 	if (GetAsyncKeyState(' ') & 0x8000) { p += up * speed*dt; }
 	if (GetAsyncKeyState('X') & 0x8000) { p += up * -speed*dt; }
+	*/
 
 	XMStoreFloat3(&position, p);
 	XMStoreFloat3(&direction, view);

@@ -5,6 +5,7 @@
 #include "Vertex.h"
 #include "Mesh.h"
 #include "GameEntity.h"
+#include "Player.h"
 #include "Camera.h"
 #include "SimpleShader.h"
 #include "Material.h"
@@ -70,7 +71,7 @@ public:
 
 	Camera * cam;
 
-	GameEntity entity = GameEntity(mesh1, mat1);
+	Player entity = Player(mesh1, mat1, cam);
 
 private:
 	// Initialization for our "game" demo
