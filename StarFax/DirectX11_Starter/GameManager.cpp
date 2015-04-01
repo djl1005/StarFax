@@ -21,16 +21,21 @@ void GameManager::manageInput()
 			break;
 
 		case 1:
-			if (GetAsyncKeyState(VK_ESCAPE & 0x8000))
+			if (GetAsyncKeyState('P') & 0x8000)
 			{
 				state = 2;
 			}
 			break;
 
 		case 2:
-			if (GetAsyncKeyState(VK_ESCAPE & 0x8000))
+			if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
 			{
 				state = 1;
 			}
 	}
+}
+
+int GameManager::getState()
+{
+	return state;
 }

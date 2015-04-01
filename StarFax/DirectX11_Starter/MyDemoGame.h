@@ -10,6 +10,7 @@
 #include "SimpleShader.h"
 #include "Material.h"
 #include "WICTextureLoader.h"
+#include "GameManager.h"
 
 // Include run-time memory checking in debug builds
 #if defined(DEBUG) || defined(_DEBUG)
@@ -70,6 +71,8 @@ public:
 	DirectionalLight dlight2;
 
 	Camera * cam;
+
+	GameManager manager;
 
 	Player entity = Player(mesh1, mat1, cam);
 

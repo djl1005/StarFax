@@ -200,41 +200,39 @@ void MyDemoGame::UpdateScene(float dt)
 	//entity.offsetPosition(1 * dt, 0, 0);
 	//entity.offsetRotation(0, 0,  3 * dt);
 	//entity.setPosition(0, 0, 3);
-	entity.Move(dt);
+	if (manager.getState() == 1)
+	{
+		entity.Move(dt);
+	}
 	cam->update(dt);
-
-
+	manager.manageInput();
 }
 
 // Clear the screen, redraw everything, present
 void MyDemoGame::DrawScene()
 {
 	// Background color (Cornflower Blue in this case) for clearing
-	const float color[4] = {0.4f, 0.6f, 0.75f, 0.0f};
+	const float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
 
 	// Clear the buffer (erases what's on the screen)
 	//  - Do this once per frame
 	//  - At the beginning (before drawing anything)
 	deviceContext->ClearRenderTargetView(renderTargetView, color);
 	deviceContext->ClearDepthStencilView(
-		depthStencilView, 
+		depthStencilView,
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f,
 		0);
 
-
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-
-
 
 	pixelShader->SetData("light", &dlight1, sizeof(DirectionalLight));
 	pixelShader->SetData("light2", &dlight2, sizeof(DirectionalLight));
 
-	entity.draw(deviceContext, cam);
-	
-
-	
+	if (manager.getState() == 1)
+	{
+		entity.draw(deviceContext, cam);
+	}
 
 	// Present the buffer
 	//  - Puts the stuff on the screen
