@@ -33,6 +33,7 @@ public:
 	XMFLOAT4X4 getWorld();
 	Mesh * getMesh();
 	Material * getMaterial();
+	OBB GetColider();
 
 private:
 

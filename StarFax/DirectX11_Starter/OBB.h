@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include <vector>
 
 using namespace DirectX;
 
@@ -14,7 +15,7 @@ public:
 	~OBB();
 
 	void updateSat(XMFLOAT3 tras, XMFLOAT3 rotation);
-	bool Sat(OBB second);
+	bool Sat(OBB * second);
 
 private:
 

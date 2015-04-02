@@ -74,6 +74,8 @@ public:
 
 	GameManager manager;
 
+	GameEntity e = GameEntity (mesh1, mat1);
+
 	Player entity = Player(mesh1, mat1, cam);
 
 private:

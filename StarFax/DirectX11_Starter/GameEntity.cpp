@@ -11,8 +11,12 @@ GameEntity::GameEntity(Mesh* m, Material * Pmaterial)
 	scale = XMFLOAT3(1, 1, 1);
 	rotiation = XMFLOAT3(0, 0, 0);
 
+	hasChanged = true;
+
 	XMMATRIX W = XMMatrixIdentity();
 	XMStoreFloat4x4(&world, XMMatrixTranspose(W));
+
+	
 
 	calcWorld();
 }
@@ -72,6 +76,11 @@ XMFLOAT3 GameEntity::getRotation()
 XMFLOAT4X4 GameEntity::getWorld()
 {
 	return world;
+}
+
+OBB GameEntity::GetColider()
+{
+	return colider;
 }
 
 Mesh * GameEntity::getMesh()

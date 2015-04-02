@@ -104,6 +104,8 @@ bool MyDemoGame::Init()
 	dlight2.Direction = XMFLOAT3(-.5, 0, 1);
 
 	entity = Player(mesh1, mat1, cam);
+	e = GameEntity(mesh1, mat1);
+	e.setRotation(0, 0, 3.14 / 4);
 
 	// Successfully initialized
 	return true;
@@ -178,8 +180,6 @@ void MyDemoGame::OnResize()
 	// Handle base-level DX resize stuff
 	DirectXGame::OnResize();
 
-	float a = 5;
-
 	// Update our projection matrix since the window size changed
 	if (cam != 0)
 	{
@@ -197,12 +197,18 @@ void MyDemoGame::UpdateScene(float dt)
 {
 	// Take input, update game logic, etc.
 	entity.calcWorld();
+	e.calcWorld();
 	//entity.offsetPosition(1 * dt, 0, 0);
 	//entity.offsetRotation(0, 0,  3 * dt);
 	//entity.setPosition(0, 0, 3);
 	if (manager.getState() == 1)
 	{
 		entity.Move(dt);
+		if (entity.GetColider().Sat(&e.GetColider()))
+		{
+			//collision
+		}
+	
 	}
 	cam->update(dt);
 	manager.manageInput();
@@ -232,6 +238,7 @@ void MyDemoGame::DrawScene()
 	if (manager.getState() == 1)
 	{
 		entity.draw(deviceContext, cam);
+		e.draw(deviceContext, cam);
 	}
 
 	// Present the buffer

@@ -3,7 +3,7 @@
 
 OBB::OBB()
 {
-	halfWidth = XMFLOAT3(1,1,1);
+	halfWidth = XMFLOAT3(.5,.5,.5);
 
 	vertices[0] = XMFLOAT3(-1, -1, 1);
 	vertices[1] = XMFLOAT3(1, -1, 1);
@@ -61,4 +61,94 @@ void OBB::updateSat(XMFLOAT3 translation, XMFLOAT3 rotation)
 	}
 
 
+}
+
+bool OBB::Sat(OBB * second)
+{
+	XMVECTOR axisToTest[15];
+
+	int indexToadd = 0;
+
+	for (int i = 0; i < 3; i++)
+	{
+		axisToTest[indexToadd] = XMVectorSet(rotatedNormals[i].x, rotatedNormals[i].y, rotatedNormals[i].z, 0);
+		indexToadd++;
+	}
+	
+	for (int i = 0; i < 3; i++)
+	{
+		axisToTest[indexToadd] = XMVectorSet(second->rotatedNormals[i].x,
+										second->rotatedNormals[i].y, 
+										second->rotatedNormals[i].z, 0);
+		indexToadd++;
+	}
+
+
+	XMVECTOR zero = XMVectorSet(0, 0, 0, 0);
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			XMVECTOR temp = XMVector3Cross(axisToTest[i], axisToTest[j]);
+			if (!XMVector3Equal(temp, zero))
+			{
+				axisToTest[indexToadd] = temp;
+				indexToadd++;
+			}
+		}
+
+	}
+
+
+
+	for (int i = 0; i < indexToadd; i++)
+	{
+
+		//min max along axis for a object a 
+		float mina = 9999;
+		float maxa = -9999;
+
+		float minb = 9999;
+		float maxb = -9999;
+
+		for (int j = 0; j < 8; j++)
+		{
+			XMVECTOR temp = XMVectorSet(worldVertices[j].x, worldVertices[j].y,  worldVertices[j].z, 0);
+			XMVECTOR a = XMVector3Dot(axisToTest[i],temp);
+			float dot; 
+			XMStoreFloat(&dot, a);
+			
+			if (dot <mina) { mina = dot; }
+			if (dot > maxa) { maxa = dot; }
+		}
+
+		for (int j = 0; j < 8; j++)
+		{
+			XMVECTOR temp = XMVectorSet(second->worldVertices[j].x, second->worldVertices[j].y, second->worldVertices[j].z, 0);
+			XMVECTOR a = XMVector3Dot(axisToTest[i], temp);
+			float dot;
+			XMStoreFloat(&dot, a);
+
+			if (dot <minb) { minb = dot; }
+			if (dot > maxb) { maxb = dot; }
+		}
+
+		//if they don't over lap return
+		if (!(maxb >= mina &&  maxb <= maxa))
+		{
+			if (!(minb >= mina &&  minb <= maxa))
+			{
+				if (!(maxa >= minb &&  maxa <= maxb))
+				{
+					if (!(mina >= minb &&  mina <= maxb))
+					{
+						return false;
+					}
+				}
+			}
+		}
+	}
+
+	return true;
 }
