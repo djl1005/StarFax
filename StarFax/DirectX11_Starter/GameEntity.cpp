@@ -34,6 +34,30 @@ void GameEntity::offsetPosition(float x, float y, float z)
 	hasChanged = true;
 }
 
+void GameEntity::setVelocity(float x, float y, float z)
+{
+	velocity = XMFLOAT3(x, y, z);
+	hasChanged = true;
+}
+
+void GameEntity::offsetVelocity(float x, float y, float z)
+{
+	velocity = XMFLOAT3(velocity.x + x, velocity.y + y, velocity.z + z);
+	hasChanged = true;
+}
+
+void GameEntity::setAcceleration(float x, float y, float z)
+{
+	acceleration = XMFLOAT3(x, y, z);
+	hasChanged = true;
+}
+
+void GameEntity::offsetAcceleration(float x, float y, float z)
+{
+	acceleration = XMFLOAT3(acceleration.x + x, acceleration.y + y, acceleration.z + z);
+	hasChanged = true;
+}
+
 void GameEntity::setScale(float x, float y, float z)
 {
 	scale = XMFLOAT3(x, y, z);
@@ -55,6 +79,31 @@ void GameEntity::setRotation(float x, float y, float z)
 void GameEntity::offsetRotation(float x, float y, float z)
 {
 	rotiation = XMFLOAT3(rotiation.x + x, rotiation.y + y, rotiation.z + z);
+	hasChanged = true;
+}
+
+void GameEntity::setRotVelocity(float x, float y, float z)
+{
+	rotVelocity = XMFLOAT3(x, y, z);
+	hasChanged = true;
+}
+
+void GameEntity::offsetRotVelocity(float x, float y, float z)
+{
+	rotVelocity = XMFLOAT3(rotVelocity.x + x, rotVelocity.y + y, rotVelocity.z + z);
+	hasChanged = true;
+}
+
+
+void GameEntity::setRotAcceleration(float x, float y, float z)
+{
+	rotAcceleration = XMFLOAT3(x, y, z);
+	hasChanged = true;
+}
+
+void GameEntity::offsetRotAcceleration(float x, float y, float z)
+{
+	rotAcceleration = XMFLOAT3(rotAcceleration.x + x, rotAcceleration.y + y, rotAcceleration.z + z);
 	hasChanged = true;
 }
 

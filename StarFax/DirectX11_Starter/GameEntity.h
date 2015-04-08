@@ -22,6 +22,14 @@ public:
 	void offsetScale(float, float, float);
 	void setRotation(float, float, float);
 	void offsetRotation(float, float, float);
+	void setVelocity(float, float, float);
+	void setAcceleration(float, float, float);
+	void setRotVelocity(float, float, float);
+	void setRotAcceleration(float, float, float);
+	void offsetVelocity(float, float, float);
+	void offsetAcceleration(float, float, float);
+	void offsetRotVelocity(float, float, float);
+	void offsetRotAcceleration(float, float, float);
 
 	void calcWorld();
 
@@ -30,6 +38,12 @@ public:
 	XMFLOAT3 getPosition();
 	XMFLOAT3 getScale();
 	XMFLOAT3 getRotation();
+	XMFLOAT3 getVelocity();
+	XMFLOAT3 getAcceleration();
+	XMFLOAT3 getRotVelocity();
+	XMFLOAT3 getRotAcceleration();
+	
+	
 	XMFLOAT4X4 getWorld();
 	Mesh * getMesh();
 	Material * getMaterial();
@@ -41,8 +55,12 @@ private:
 	
 
 	XMFLOAT3 position;
+	XMFLOAT3 velocity;
+	XMFLOAT3 acceleration;
 	XMFLOAT3 scale;
 	XMFLOAT3 rotiation;
+	XMFLOAT3 rotVelocity;
+	XMFLOAT3 rotAcceleration;
 
 	OBB colider;
 
