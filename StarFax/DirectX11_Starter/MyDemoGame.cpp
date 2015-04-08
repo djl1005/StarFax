@@ -96,11 +96,11 @@ bool MyDemoGame::Init()
 	InitializeCameraMatrices();
 
 	dlight1.AmbientColor = XMFLOAT4(0.1, 0.1, 0.1, 1);
-	dlight1.DiffuseColor = XMFLOAT4(0, 0, .25, 1);
+	dlight1.DiffuseColor = XMFLOAT4(.25, .25, .25, 1);
 	dlight1.Direction = XMFLOAT3(1, -1, 0);
 
 	dlight2.AmbientColor = XMFLOAT4(0.1, 0.1, 0.1, 1);
-	dlight2.DiffuseColor = XMFLOAT4(0, .25, 0, 1);
+	dlight2.DiffuseColor = XMFLOAT4(.35, .35, .35, 1);
 	dlight2.Direction = XMFLOAT3(-.5, 0, 1);
 
 	entity = Player(mesh1, mat1, cam);
