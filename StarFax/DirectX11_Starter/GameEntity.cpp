@@ -11,8 +11,13 @@ GameEntity::GameEntity(Mesh* m, Material * Pmaterial)
 	scale = XMFLOAT3(1, 1, 1);
 	rotiation = XMFLOAT3(0, 0, 0);
 
-	hasChanged = true;
+	velocity = XMFLOAT3(0, 0, 0);
+	acceleration = XMFLOAT3(0, 0, 0);
 
+	rotVelocity = XMFLOAT3(0, 0, 0);
+	rotAcceleration = XMFLOAT3(0, 0, 0);
+
+	
 	XMMATRIX W = XMMatrixIdentity();
 	XMStoreFloat4x4(&world, XMMatrixTranspose(W));
 
@@ -25,37 +30,31 @@ GameEntity::GameEntity(Mesh* m, Material * Pmaterial)
 void GameEntity::setPosition(float x, float y, float z)
 {
 	position = XMFLOAT3(x, y, z);
-	hasChanged = true;
 }
 
 void GameEntity::offsetPosition(float x, float y, float z)
 {
 	position = XMFLOAT3(position.x + x, position.y + y, position.z + z);
-	hasChanged = true;
 }
 
 void GameEntity::setVelocity(float x, float y, float z)
 {
 	velocity = XMFLOAT3(x, y, z);
-	hasChanged = true;
 }
 
 void GameEntity::offsetVelocity(float x, float y, float z)
 {
 	velocity = XMFLOAT3(velocity.x + x, velocity.y + y, velocity.z + z);
-	hasChanged = true;
 }
 
 void GameEntity::setAcceleration(float x, float y, float z)
 {
 	acceleration = XMFLOAT3(x, y, z);
-	hasChanged = true;
 }
 
 void GameEntity::offsetAcceleration(float x, float y, float z)
 {
 	acceleration = XMFLOAT3(acceleration.x + x, acceleration.y + y, acceleration.z + z);
-	hasChanged = true;
 }
 
 void GameEntity::setScale(float x, float y, float z)
@@ -73,38 +72,32 @@ void GameEntity::offsetScale(float x, float y, float z)
 void GameEntity::setRotation(float x, float y, float z)
 {
 	rotiation = XMFLOAT3(x, y, z);
-	hasChanged = true;
 }
 
 void GameEntity::offsetRotation(float x, float y, float z)
 {
 	rotiation = XMFLOAT3(rotiation.x + x, rotiation.y + y, rotiation.z + z);
-	hasChanged = true;
 }
 
 void GameEntity::setRotVelocity(float x, float y, float z)
 {
 	rotVelocity = XMFLOAT3(x, y, z);
-	hasChanged = true;
 }
 
 void GameEntity::offsetRotVelocity(float x, float y, float z)
 {
 	rotVelocity = XMFLOAT3(rotVelocity.x + x, rotVelocity.y + y, rotVelocity.z + z);
-	hasChanged = true;
 }
 
 
 void GameEntity::setRotAcceleration(float x, float y, float z)
 {
 	rotAcceleration = XMFLOAT3(x, y, z);
-	hasChanged = true;
 }
 
 void GameEntity::offsetRotAcceleration(float x, float y, float z)
 {
 	rotAcceleration = XMFLOAT3(rotAcceleration.x + x, rotAcceleration.y + y, rotAcceleration.z + z);
-	hasChanged = true;
 }
 
 XMFLOAT3 GameEntity::getPosition()
@@ -144,11 +137,35 @@ Material * GameEntity::getMaterial()
 
 #pragma endregion
 
+void GameEntity::update()
+{
+	XMFLOAT3 tempPos = position;
+	XMFLOAT3 tempRot = rotiation;
+
+	offsetVelocity(acceleration.x, acceleration.y, acceleration.z);
+	offsetPosition(velocity.x, velocity.y, velocity.z);
+
+	offsetRotVelocity(rotAcceleration.x, rotAcceleration.y, rotAcceleration.z);
+	offsetRotation(rotVelocity.x, rotVelocity.y, rotVelocity.z);
+
+	if (velocity.y != 0)
+	{
+		float a = 5;
+	}
+
+
+	//check to see if pos changed
+	if (!(position.x == tempPos.x && position.y == tempPos.y && position.z == tempPos.z) || 
+		!(rotiation.x == tempRot.x && rotiation.y == tempRot.y && rotiation.z == tempRot.z))
+	{
+			calcWorld();
+	}
+
+}
+
 
 void GameEntity::calcWorld()
 {
-	if (hasChanged)
-	{
 
 		XMMATRIX scaleMatrix = XMMatrixScaling(scale.x, scale.y, scale.z);
 		XMMATRIX rotationXMatrix = XMMatrixRotationX(rotiation.x);
@@ -161,10 +178,6 @@ void GameEntity::calcWorld()
 		XMStoreFloat4x4(&world, XMMatrixTranspose(W));
 
 		colider.updateSat(this->position, this->rotiation);
-
-		hasChanged = false;
-	}
-
 }
 
 void GameEntity::draw(ID3D11DeviceContext * deviceContext, Camera * cam)

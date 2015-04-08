@@ -106,6 +106,7 @@ bool MyDemoGame::Init()
 	entity = Player(mesh1, mat1, cam);
 	e = GameEntity(mesh1, mat1);
 	e.setRotation(0, 0, 3.14 / 4);
+	e.calcWorld();
 
 	// Successfully initialized
 	return true;
@@ -196,8 +197,9 @@ void MyDemoGame::OnResize()
 void MyDemoGame::UpdateScene(float dt)
 {
 	// Take input, update game logic, etc.
-	entity.calcWorld();
-	e.calcWorld();
+	entity.update();
+	e.update();
+
 	//entity.offsetPosition(1 * dt, 0, 0);
 	//entity.offsetRotation(0, 0,  3 * dt);
 	//entity.setPosition(0, 0, 3);

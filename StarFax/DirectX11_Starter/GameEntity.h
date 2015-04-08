@@ -16,6 +16,8 @@ public:
 	GameEntity(Mesh*, Material *);
 	~GameEntity();
 
+	void update();
+
 	void setPosition(float, float, float);
 	void offsetPosition(float, float, float);
 	void setScale(float, float, float);
