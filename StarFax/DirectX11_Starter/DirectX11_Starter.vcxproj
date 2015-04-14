@@ -80,6 +80,7 @@
     <ClCompile Include="OBB.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SimpleShader.cpp" />
+    <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -94,6 +95,7 @@
     <ClInclude Include="OBB.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SimpleShader.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>

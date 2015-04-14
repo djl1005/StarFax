@@ -11,6 +11,7 @@
 #include "Material.h"
 #include "WICTextureLoader.h"
 #include "GameManager.h"
+#include "Terrain.h"
 
 // Include run-time memory checking in debug builds
 #if defined(DEBUG) || defined(_DEBUG)
@@ -60,6 +61,8 @@ public:
 	Mesh * sphere;
 	Mesh * mesh3;
 	Material* mat1;
+
+	Terrain * feild; 
 
 	ID3D11ShaderResourceView * srv;
 

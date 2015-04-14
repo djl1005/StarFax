@@ -105,6 +105,7 @@ bool MyDemoGame::Init()
 
 	entity = Player(box, mat1, cam);
 	e = GameEntity(sphere, mat1);
+	feild = new Terrain(device, mat1, 1);
 	e.setRotation(0, 0, 3.14 / 4);
 	e.calcWorld();
 
@@ -242,6 +243,7 @@ void MyDemoGame::DrawScene()
 	{
 		entity.draw(deviceContext, cam);
 		e.draw(deviceContext, cam);
+		feild->draw(deviceContext, cam);
 	}
 
 	// Present the buffer
