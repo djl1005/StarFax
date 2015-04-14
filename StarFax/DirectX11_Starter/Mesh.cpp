@@ -19,7 +19,8 @@ Mesh::Mesh(Vertex * vertices, int numVertices, unsigned int* pindices, int _numI
 	HR(theDevice->CreateBuffer(&vbd, &initialVertexData, &vertexBuffer));
 
 	// Set up the indices of the vertices (necessary for indexed drawing)
-	UINT indices[] = { 0, 2, 1 };
+	//UINT indices[] = { 0, 2, 1 };
+
 
 	// Create the index buffer
 	D3D11_BUFFER_DESC ibd;

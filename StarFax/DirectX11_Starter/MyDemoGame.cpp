@@ -105,7 +105,9 @@ bool MyDemoGame::Init()
 
 	entity = Player(box, mat1, cam);
 	e = GameEntity(sphere, mat1);
-	feild = new Terrain(device, mat1, 1);
+	
+	terrain = GameEntity(feild, mat1);
+	terrain.setPosition(0, -5, 0);
 	e.setRotation(0, 0, 3.14 / 4);
 	e.calcWorld();
 
@@ -119,6 +121,7 @@ void MyDemoGame::CreateGeometryBuffers()
 
 	box = new Mesh("cube.obj", device);
 	sphere = new Mesh("sphere.obj", device);
+	genrateTerrain(device, 1, 5);
 
 }
 
@@ -243,7 +246,7 @@ void MyDemoGame::DrawScene()
 	{
 		entity.draw(deviceContext, cam);
 		e.draw(deviceContext, cam);
-		feild->draw(deviceContext, cam);
+		terrain.draw(deviceContext, cam);
 	}
 
 	// Present the buffer
@@ -283,3 +286,59 @@ void MyDemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 	prevMousePos.y = y;
 }
 #pragma endregion
+
+void MyDemoGame::genrateTerrain(ID3D11Device * theDevice, float dist, int size)
+{
+
+	//Vertex a[25];
+	//unsigned int in[96];
+
+	int curentIndex = 0;
+
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			Vertex temp;
+			temp.Position = XMFLOAT3(dist * i, 0, dist * j);
+			temp.Normal = XMFLOAT3(0, 1, 0);
+
+			float u = float(i) / float(size);
+			float v = float(j) / float(size);
+
+			temp.UV = XMFLOAT2(u, v);
+			a[curentIndex] = temp;
+
+			curentIndex++;
+		}
+	}
+
+	int index = 0;
+
+	for (int i = 0; i < size * size; i += 1)
+	{
+		if (i + size < size * size)
+		{
+			in[index] = i;
+			index++;
+			in[index] = i + size;
+			index++;
+			in[index] = i + 1;
+			index++;
+		}
+		if (i - size > 0)
+		{
+			in[index] = i;
+			index++;
+			in[index] = i + 1;
+			index++;
+			in[index] = i + 1 - size;
+			index++;
+		}
+	}
+
+	feild = new Mesh(a, size* size, in, index, theDevice);
+
+	float ayhnytuny = 5;
+
+}

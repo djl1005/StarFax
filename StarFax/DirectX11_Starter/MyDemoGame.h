@@ -62,7 +62,7 @@ public:
 	Mesh * mesh3;
 	Material* mat1;
 
-	Terrain * feild; 
+	Mesh * feild; 
 
 	ID3D11ShaderResourceView * srv;
 
@@ -79,6 +79,8 @@ public:
 
 	GameEntity e = GameEntity(box, mat1);
 
+	GameEntity terrain = GameEntity(feild, mat1);
+
 	Player entity = Player(box, mat1, cam);
 
 private:
@@ -86,13 +88,14 @@ private:
 	void CreateGeometryBuffers();
 	void LoadShadersAndInputLayout();
 	void InitializeCameraMatrices();
-
+	void genrateTerrain(ID3D11Device * theDevice, float dist, int size);
 private:
 	// Buffers to hold actual geometry
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
 
-
+	Vertex a[25];
+	unsigned int in[96];
 
 	SimplePixelShader * pixelShader;
 	SimpleVertexShader * vertexShader;
