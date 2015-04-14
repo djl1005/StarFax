@@ -68,8 +68,8 @@ MyDemoGame::~MyDemoGame()
 	ReleaseMacro(indexBuffer);
 
 
-	delete(mesh1);
-	delete(mesh2);
+	delete(box);
+	delete(sphere);
 	delete(mesh3);
 
 }
@@ -103,8 +103,8 @@ bool MyDemoGame::Init()
 	dlight2.DiffuseColor = XMFLOAT4(.35, .35, .35, 1);
 	dlight2.Direction = XMFLOAT3(-.5, 0, 1);
 
-	entity = Player(mesh1, mat1, cam);
-	e = GameEntity(mesh1, mat1);
+	entity = Player(box, mat1, cam);
+	e = GameEntity(sphere, mat1);
 	e.setRotation(0, 0, 3.14 / 4);
 	e.calcWorld();
 
@@ -116,7 +116,8 @@ bool MyDemoGame::Init()
 void MyDemoGame::CreateGeometryBuffers()
 {
 
-	mesh1 = new Mesh("cube.obj", device);
+	box = new Mesh("cube.obj", device);
+	sphere = new Mesh("sphere.obj", device);
 
 }
 

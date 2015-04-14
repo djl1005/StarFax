@@ -56,8 +56,8 @@ public:
 	void OnMouseUp(WPARAM btnState, int x, int y);
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
-	Mesh * mesh1;
-	Mesh * mesh2;
+	Mesh * box;
+	Mesh * sphere;
 	Mesh * mesh3;
 	Material* mat1;
 
@@ -74,9 +74,9 @@ public:
 
 	GameManager manager;
 
-	GameEntity e = GameEntity (mesh1, mat1);
+	GameEntity e = GameEntity(box, mat1);
 
-	Player entity = Player(mesh1, mat1, cam);
+	Player entity = Player(box, mat1, cam);
 
 private:
 	// Initialization for our "game" demo
