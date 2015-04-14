@@ -107,7 +107,7 @@ bool MyDemoGame::Init()
 	e = GameEntity(sphere, mat1);
 	
 	terrain = GameEntity(feild, mat1);
-	terrain.setPosition(0, -5, 0);
+	terrain.setPosition(0, 0, 0);
 	e.setRotation(0, 0, 3.14 / 4);
 	e.calcWorld();
 
@@ -215,6 +215,8 @@ void MyDemoGame::UpdateScene(float dt)
 		{
 			//collision
 		}
+
+		terrain.setRotVelocity(.02, 0, 0);
 	
 	}
 	cam->update(dt);
@@ -300,7 +302,7 @@ void MyDemoGame::genrateTerrain(ID3D11Device * theDevice, float dist, int size)
 		for (int j = 0; j < size; j++)
 		{
 			Vertex temp;
-			temp.Position = XMFLOAT3(dist * i, 0, dist * j);
+			temp.Position = XMFLOAT3((dist * i) - (dist* (size -1) / 2), 0, (dist * j) - (dist* (size - 1) / 2));
 			temp.Normal = XMFLOAT3(0, 1, 0);
 
 			float u = float(i) / float(size);
@@ -317,23 +319,27 @@ void MyDemoGame::genrateTerrain(ID3D11Device * theDevice, float dist, int size)
 
 	for (int i = 0; i < size * size; i += 1)
 	{
-		if (i + size < size * size)
+		if (!(i%size == size - 1))
 		{
-			in[index] = i;
-			index++;
-			in[index] = i + size;
-			index++;
-			in[index] = i + 1;
-			index++;
-		}
-		if (i - size > 0)
-		{
-			in[index] = i;
-			index++;
-			in[index] = i + 1;
-			index++;
-			in[index] = i + 1 - size;
-			index++;
+
+			if (i + size < size * size)
+			{
+				in[index] = i;
+				index++;
+				in[index] = i + size;
+				index++;
+				in[index] = i + 1;
+				index++;
+			}
+			if (i - size >= 0)
+			{
+				in[index] = i;
+				index++;
+				in[index] = i + 1;
+				index++;
+				in[index] = i + 1 - size;
+				index++;
+			}
 		}
 	}
 
