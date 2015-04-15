@@ -137,22 +137,18 @@ Material * GameEntity::getMaterial()
 
 #pragma endregion
 
-void GameEntity::update()
+void GameEntity::update(float dt)
 {
 	XMFLOAT3 tempPos = position;
 	XMFLOAT3 tempRot = rotiation;
 
-	offsetVelocity(acceleration.x, acceleration.y, acceleration.z);
-	offsetPosition(velocity.x, velocity.y, velocity.z);
+	
 
-	offsetRotVelocity(rotAcceleration.x, rotAcceleration.y, rotAcceleration.z);
-	offsetRotation(rotVelocity.x, rotVelocity.y, rotVelocity.z);
+	offsetVelocity(acceleration.x*dt, acceleration.y*dt, acceleration.z*dt);
+	offsetPosition(velocity.x*dt, velocity.y*dt, velocity.z*dt);
 
-	if (velocity.y != 0)
-	{
-		float a = 5;
-	}
-
+	offsetRotVelocity(rotAcceleration.x*dt, rotAcceleration.y*dt, rotAcceleration.z*dt);
+	offsetRotation(rotVelocity.x*dt, rotVelocity.y*dt, rotVelocity.z*dt);
 
 	//check to see if pos changed
 	if (!(position.x == tempPos.x && position.y == tempPos.y && position.z == tempPos.z) || 

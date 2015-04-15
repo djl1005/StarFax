@@ -16,22 +16,22 @@ void Player::Move(float dt)
 
 	if (GetAsyncKeyState('W') & 0x8000)
 	{
-		setVelocity(0.0f, speed * dt, 0.0f);
+		setVelocity(0.0f, speed, 0.0f);
 	}
 
 	else if (GetAsyncKeyState('S') & 0x8000)
 	{
-		setVelocity(0.0f, -speed * dt, 0.0f);
+		setVelocity(0.0f, -speed, 0.0f);
 	}
 
 	else if (GetAsyncKeyState('A') & 0x8000)
 	{
-		setVelocity(-speed * dt, 0.0f, 0.0f);
+		setVelocity(-speed, 0.0f, 0.0f);
 	}
 
 	else if (GetAsyncKeyState('D') & 0x8000)
 	{
-		setVelocity(speed * dt, 0.0f, 0.0f);
+		setVelocity(speed, 0.0f, 0.0f);
 	}
 
 	else

@@ -107,8 +107,14 @@ bool MyDemoGame::Init()
 	e = GameEntity(sphere, mat1);
 	
 	terrain = GameEntity(feild, mat1);
-	terrain.setPosition(0, 0, 0);
-	e.setRotation(0, 0, 3.14 / 4);
+	terrain.setPosition(0, -2, 2);
+
+	//terrain.setRotVelocity((3.14/16), 0, 0);
+
+	//terrain.setRotation(6.45, 0, 0);
+	terrain.calcWorld();
+
+	e.setPosition(0, 0, 2);
 	e.calcWorld();
 
 	// Successfully initialized
@@ -118,11 +124,9 @@ bool MyDemoGame::Init()
 // Creates the vertex and index buffers for a single triangle
 void MyDemoGame::CreateGeometryBuffers()
 {
-
 	box = new Mesh("cube.obj", device);
 	sphere = new Mesh("sphere.obj", device);
 	genrateTerrain(device, 1, 5);
-
 }
 
 // Loads shaders from compiled shader object (.cso) files, and uses the
@@ -202,8 +206,8 @@ void MyDemoGame::OnResize()
 void MyDemoGame::UpdateScene(float dt)
 {
 	// Take input, update game logic, etc.
-	entity.update();
-	e.update();
+	entity.update(dt);
+	e.update(dt);
 
 	//entity.offsetPosition(1 * dt, 0, 0);
 	//entity.offsetRotation(0, 0,  3 * dt);
@@ -216,7 +220,9 @@ void MyDemoGame::UpdateScene(float dt)
 			//collision
 		}
 
-		terrain.setRotVelocity(.02, 0, 0);
+		
+
+		terrain.update(dt);
 	
 	}
 	cam->update(dt);
@@ -305,8 +311,8 @@ void MyDemoGame::genrateTerrain(ID3D11Device * theDevice, float dist, int size)
 			temp.Position = XMFLOAT3((dist * i) - (dist* (size -1) / 2), 0, (dist * j) - (dist* (size - 1) / 2));
 			temp.Normal = XMFLOAT3(0, 1, 0);
 
-			float u = float(i) / float(size);
-			float v = float(j) / float(size);
+			float u = float(i) / float(size -1);
+			float v = float(j) / float(size - 1);
 
 			temp.UV = XMFLOAT2(u, v);
 			a[curentIndex] = temp;
@@ -326,18 +332,22 @@ void MyDemoGame::genrateTerrain(ID3D11Device * theDevice, float dist, int size)
 			{
 				in[index] = i;
 				index++;
-				in[index] = i + size;
-				index++;
+				
 				in[index] = i + 1;
+				index++;
+
+				in[index] = i + size;
 				index++;
 			}
 			if (i - size >= 0)
 			{
 				in[index] = i;
 				index++;
-				in[index] = i + 1;
-				index++;
+
 				in[index] = i + 1 - size;
+				index++;
+
+				in[index] = i + 1;
 				index++;
 			}
 		}
