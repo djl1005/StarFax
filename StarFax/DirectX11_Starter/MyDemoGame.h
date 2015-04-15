@@ -1,11 +1,14 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include <vector>
 #include "DirectXGame.h"
 #include "Vertex.h"
 #include "Mesh.h"
 #include "GameEntity.h"
 #include "Player.h"
+#include "Enemy.h"
+#include "Bullet.h"
 #include "Camera.h"
 #include "SimpleShader.h"
 #include "Material.h"
@@ -77,7 +80,9 @@ public:
 
 	GameManager manager;
 
-	GameEntity e = GameEntity(box, mat1);
+	std::vector<Bullet> bullets;
+
+	Enemy e = Enemy(box, mat1);
 
 	GameEntity terrain = GameEntity(feild, mat1);
 

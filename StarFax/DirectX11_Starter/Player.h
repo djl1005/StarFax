@@ -1,5 +1,6 @@
 #pragma once
 #include "GameEntity.h"
+#include "Bullet.h"
 #include "Camera.h"
 
 class Player :
@@ -10,6 +11,7 @@ public:
 	~Player();
 
 	void Move(float);
+	bool Fire();
 
 private:
 	float speed;

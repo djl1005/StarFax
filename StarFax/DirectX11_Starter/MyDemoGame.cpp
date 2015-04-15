@@ -104,7 +104,7 @@ bool MyDemoGame::Init()
 	dlight2.Direction = XMFLOAT3(-.5, 0, 1);
 
 	entity = Player(box, mat1, cam);
-	e = GameEntity(sphere, mat1);
+	e = Enemy(sphere, mat1);
 	
 	terrain = GameEntity(feild, mat1);
 	terrain.setPosition(0, -2, 2);
@@ -114,7 +114,7 @@ bool MyDemoGame::Init()
 	//terrain.setRotation(6.45, 0, 0);
 	terrain.calcWorld();
 
-	e.setPosition(0, 0, 2);
+	e.setPosition(-3, 0, 2);
 	e.calcWorld();
 
 	// Successfully initialized
@@ -214,13 +214,28 @@ void MyDemoGame::UpdateScene(float dt)
 	//entity.setPosition(0, 0, 3);
 	if (manager.getState() == 1)
 	{
+
+
 		entity.Move(dt);
+
+		if (entity.Fire()) {
+			Bullet temp = Bullet(sphere, mat1);
+			temp.setPosition(entity.getPosition().x, entity.getPosition().y, entity.getPosition().z);
+			bullets.push_back(temp);
+		}
+
+		for (int i = bullets.size() - 1; i >= 0; i--) {
+			bullets[i].update(dt);
+			if (bullets[i].getPosition().z > 50) {
+				bullets.erase(bullets.begin() + i);
+			}
+		}
+
+		e.Move(dt);
 		if (entity.GetColider().Sat(&e.GetColider()))
 		{
 			//collision
 		}
-
-		
 
 		terrain.update(dt);
 	
@@ -254,6 +269,11 @@ void MyDemoGame::DrawScene()
 	{
 		entity.draw(deviceContext, cam);
 		e.draw(deviceContext, cam);
+
+		for each(Bullet b in bullets) {
+			b.draw(deviceContext, cam);
+		}
+
 		terrain.draw(deviceContext, cam);
 	}
 

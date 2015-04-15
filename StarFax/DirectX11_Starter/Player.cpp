@@ -12,8 +12,6 @@ Player::~Player()
 
 void Player::Move(float dt)
 {
-
-
 	if (GetAsyncKeyState('W') & 0x8000)
 	{
 		setVelocity(0.0f, speed, 0.0f);
@@ -37,5 +35,18 @@ void Player::Move(float dt)
 	else
 	{
 		setVelocity(0, 0, 0);
+	}
+}
+
+bool Player::Fire()
+{
+	if (GetAsyncKeyState('F') & 0x8000)
+	{
+		return true;
+	}
+
+	else 
+	{
+		return false;
 	}
 }
