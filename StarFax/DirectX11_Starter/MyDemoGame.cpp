@@ -103,10 +103,10 @@ bool MyDemoGame::Init()
 	dlight2.DiffuseColor = XMFLOAT4(.35, .35, .35, 1);
 	dlight2.Direction = XMFLOAT3(-.5, 0, 1);
 
-	entity = Player(box, mat1, cam);
-	e = Enemy(sphere, mat1);
+	entity = Player(playerMesh, playerMat, cam);
+	e = Enemy(enemyMesh, enemyMat);
 	
-	terrain = GameEntity(feild, mat1);
+	terrain = GameEntity(feild, terrainMat);
 	terrain.setPosition(0, -2, 2);
 
 	//terrain.setRotVelocity((3.14/16), 0, 0);
@@ -126,6 +126,8 @@ void MyDemoGame::CreateGeometryBuffers()
 {
 	box = new Mesh("cube.obj", device);
 	sphere = new Mesh("sphere.obj", device);
+	enemyMesh = new Mesh("Enemy.obj", device);
+	playerMesh = new Mesh("Player.obj", device);
 	genrateTerrain(device, 1, 5);
 }
 
@@ -167,6 +169,68 @@ void MyDemoGame::LoadShadersAndInputLayout()
 	device->CreateSamplerState(&sam, &sampler);
 
 	mat1 = new Material(vertexShader, pixelShader,srv,sampler);
+
+
+	//Enemy Material
+	CreateWICTextureFromFile(device, deviceContext, L"enemyTexture.jpg", 0, &srv);
+
+	//D3D11_SAMPLER_DESC sam;
+
+	ZeroMemory(&sam, sizeof(D3D11_SAMPLER_DESC));
+
+	sam.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sam.MaxLOD = D3D11_FLOAT32_MAX;
+
+	//device->CreateSamplerState(&sam, &sampler);
+
+	device->CreateSamplerState(&sam, &sampler);
+
+	enemyMat = new Material(vertexShader, pixelShader, srv, sampler);
+
+
+
+	//Player Material
+	CreateWICTextureFromFile(device, deviceContext, L"Ice.jpg", 0, &srv);			//Will be updated with correct texture when textures stop being broken
+
+	//D3D11_SAMPLER_DESC sam;
+
+	ZeroMemory(&sam, sizeof(D3D11_SAMPLER_DESC));
+
+	sam.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sam.MaxLOD = D3D11_FLOAT32_MAX;
+
+	//device->CreateSamplerState(&sam, &sampler);
+
+	device->CreateSamplerState(&sam, &sampler);
+
+	playerMat = new Material(vertexShader, pixelShader, srv, sampler);
+
+
+	//Terrain Material
+	CreateWICTextureFromFile(device, deviceContext, L"Ice.jpg", 0, &srv);
+
+	//D3D11_SAMPLER_DESC sam;
+
+	ZeroMemory(&sam, sizeof(D3D11_SAMPLER_DESC));
+
+	sam.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sam.MaxLOD = D3D11_FLOAT32_MAX;
+
+	//device->CreateSamplerState(&sam, &sampler);
+
+	device->CreateSamplerState(&sam, &sampler);
+
+	terrainMat = new Material(vertexShader, pixelShader, srv, sampler);
+
 
 
 }

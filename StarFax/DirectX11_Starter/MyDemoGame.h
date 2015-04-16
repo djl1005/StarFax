@@ -62,8 +62,13 @@ public:
 
 	Mesh * box;
 	Mesh * sphere;
+	Mesh * playerMesh;
+	Mesh * enemyMesh;
 	Mesh * mesh3;
 	Material* mat1;
+	Material* enemyMat;
+	Material* playerMat;
+	Material* terrainMat;
 
 	Mesh * feild; 
 
