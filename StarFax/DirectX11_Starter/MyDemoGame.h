@@ -104,8 +104,8 @@ private:
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
 
-	Vertex a[25];
-	unsigned int in[96];
+	//Vertex a[25];
+	//unsigned int in[96];
 
 	SimplePixelShader * pixelShader;
 	SimpleVertexShader * vertexShader;

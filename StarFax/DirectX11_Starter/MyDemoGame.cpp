@@ -105,10 +105,10 @@ bool MyDemoGame::Init()
 	e = Enemy(enemyMesh, enemyMat);
 	
 	terrain = GameEntity(feild, terrainMat);
-	terrain.setPosition(0, -3, 10);
+	terrain.setPosition(0, -3, 0);
 	terrain.calcWorld();
 
-	e.setPosition(-3, 0, 2);
+	e.setPosition(-3, 0, 10);
 	e.calcWorld();
 
 	// Successfully initialized
@@ -122,7 +122,7 @@ void MyDemoGame::CreateGeometryBuffers()
 	sphere = new Mesh("sphere.obj", device);
 	enemyMesh = new Mesh("Enemy.obj", device);
 	playerMesh = new Mesh("Player.obj", device);
-	genrateTerrain(device, 5, 5);
+	genrateTerrain(device, 1, 128);
 }
 
 // Loads shaders from compiled shader object (.cso) files, and uses the
@@ -378,8 +378,8 @@ void MyDemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 void MyDemoGame::genrateTerrain(ID3D11Device * theDevice, float dist, int size)
 {
 
-	//Vertex a[25];
-	//unsigned int in[96];
+	Vertex a[16384];
+	unsigned int in[98304];
 
 	int curentIndex = 0;
 
@@ -388,11 +388,11 @@ void MyDemoGame::genrateTerrain(ID3D11Device * theDevice, float dist, int size)
 		for (int j = 0; j < size; j++)
 		{
 			Vertex temp;
-			temp.Position = XMFLOAT3((dist * i) - (dist* (size -1) / 2), 0, (dist * j) - (dist* (size - 1) / 2));
-			temp.Normal = XMFLOAT3(0, 1, 0);
+			temp.Position = XMFLOAT3((dist * i) - (dist* (size -1) / 2), cos(i * 3.14 * 2 /size) * 5 , (dist * j) - (dist* (size - 1) / 2));
+			temp.Normal = XMFLOAT3(sin(i * 3.14 * 2 / size), 1, 0);
 
-			float u = float(i) / float(size -1);
-			float v = float(j) / float(size - 1);
+			float u = float(i) * 16 / float(size -1);
+			float v = float(j) * 16 / float(size - 1);
 
 			temp.UV = XMFLOAT2(u, v);
 			a[curentIndex] = temp;
