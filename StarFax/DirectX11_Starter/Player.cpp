@@ -40,7 +40,7 @@ void Player::Move(float dt)
 
 bool Player::Fire()
 {
-	if (GetAsyncKeyState('F') & 0x8000)
+	if (GetAsyncKeyState(' ') & 0x8000)
 	{
 		return true;
 	}

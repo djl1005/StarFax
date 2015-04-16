@@ -10,8 +10,7 @@ class OBB
 public:
 
 	
-	OBB();
-	OBB(XMFLOAT3 halfwidth);
+	OBB(XMFLOAT3 halfwidth = XMFLOAT3(.5,.5,.5));
 	~OBB();
 
 	void updateSat(XMFLOAT3 tras, XMFLOAT3 rotation);

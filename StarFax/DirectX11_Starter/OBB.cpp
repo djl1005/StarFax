@@ -1,9 +1,10 @@
 #include "OBB.h"
 
 
-OBB::OBB()
+
+OBB::OBB(XMFLOAT3 phalfwidth)
 {
-	halfWidth = XMFLOAT3(.5,.5,.5);
+	halfWidth = phalfwidth;
 
 	vertices[0] = XMFLOAT3(-1, -1, 1);
 	vertices[1] = XMFLOAT3(1, -1, 1);

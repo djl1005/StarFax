@@ -21,7 +21,6 @@ struct DirectionalLight
 cbuffer perModel : register(b0)
 {
 	DirectionalLight light;
-	DirectionalLight light2;
 };
 
 Texture2D diffuseTexture : register(t0);
@@ -51,7 +50,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 	
 
-	return surfaceColor * calcLight(input.normal, light) + calcLight(input.normal, light2);;
+	return surfaceColor * calcLight(input.normal, light);
 
 }
 

@@ -51,7 +51,7 @@ public:
 	Material * getMaterial();
 	OBB GetColider();
 
-private:
+protected:
 
 	bool hasChanged = false;
 	

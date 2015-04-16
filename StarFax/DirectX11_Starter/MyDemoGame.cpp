@@ -96,22 +96,16 @@ bool MyDemoGame::Init()
 	InitializeCameraMatrices();
 
 	dlight1.AmbientColor = XMFLOAT4(0.1, 0.1, 0.1, 1);
-	dlight1.DiffuseColor = XMFLOAT4(.25, .25, .25, 1);
-	dlight1.Direction = XMFLOAT3(1, -1, 0);
+	dlight1.DiffuseColor = XMFLOAT4(.8, .8, .8, 1);
+	dlight1.Direction = XMFLOAT3(0, -1, .3);
 
-	dlight2.AmbientColor = XMFLOAT4(0.1, 0.1, 0.1, 1);
-	dlight2.DiffuseColor = XMFLOAT4(.35, .35, .35, 1);
-	dlight2.Direction = XMFLOAT3(-.5, 0, 1);
+
 
 	entity = Player(playerMesh, playerMat, cam);
 	e = Enemy(enemyMesh, enemyMat);
 	
 	terrain = GameEntity(feild, terrainMat);
-	terrain.setPosition(0, -2, 2);
-
-	//terrain.setRotVelocity((3.14/16), 0, 0);
-
-	//terrain.setRotation(6.45, 0, 0);
+	terrain.setPosition(0, -3, 10);
 	terrain.calcWorld();
 
 	e.setPosition(-3, 0, 2);
@@ -128,7 +122,7 @@ void MyDemoGame::CreateGeometryBuffers()
 	sphere = new Mesh("sphere.obj", device);
 	enemyMesh = new Mesh("Enemy.obj", device);
 	playerMesh = new Mesh("Player.obj", device);
-	genrateTerrain(device, 1, 5);
+	genrateTerrain(device, 5, 5);
 }
 
 // Loads shaders from compiled shader object (.cso) files, and uses the
@@ -270,8 +264,7 @@ void MyDemoGame::OnResize()
 void MyDemoGame::UpdateScene(float dt)
 {
 	// Take input, update game logic, etc.
-	entity.update(dt);
-	e.update(dt);
+
 
 	//entity.offsetPosition(1 * dt, 0, 0);
 	//entity.offsetRotation(0, 0,  3 * dt);
@@ -279,6 +272,10 @@ void MyDemoGame::UpdateScene(float dt)
 	if (manager.getState() == 1)
 	{
 
+		entity.update(dt);
+
+		e.Move(dt);
+		e.update(dt);
 
 		entity.Move(dt);
 
@@ -290,16 +287,16 @@ void MyDemoGame::UpdateScene(float dt)
 
 		for (int i = bullets.size() - 1; i >= 0; i--) {
 			bullets[i].update(dt);
-			if (bullets[i].getPosition().z > 50) {
+			if (bullets[i].getPosition().z > 15) {
+				bullets.erase(bullets.begin() + i);
+			}
+
+			else if (bullets[i].GetColider().Sat(&e.GetColider()))
+			{
 				bullets.erase(bullets.begin() + i);
 			}
 		}
 
-		e.Move(dt);
-		if (entity.GetColider().Sat(&e.GetColider()))
-		{
-			//collision
-		}
 
 		terrain.update(dt);
 	
@@ -327,7 +324,6 @@ void MyDemoGame::DrawScene()
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	pixelShader->SetData("light", &dlight1, sizeof(DirectionalLight));
-	pixelShader->SetData("light2", &dlight2, sizeof(DirectionalLight));
 
 	if (manager.getState() == 1)
 	{
