@@ -30,20 +30,20 @@
 
 // Win32 Entry Point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
-				   PSTR cmdLine, int showCmd)
+	PSTR cmdLine, int showCmd)
 {
 	// Enable run-time memory check for debug builds.
 #if defined(DEBUG) | defined(_DEBUG)
-	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
 	// Make the game, initialize and run
 	MyDemoGame game(hInstance);
-	
+
 	// If we can't initialize, we can't run
-	if( !game.Init() )
+	if (!game.Init())
 		return 0;
-	
+
 	// All set to run the game
 	return game.Run();
 }
@@ -58,7 +58,7 @@ MyDemoGame::MyDemoGame(HINSTANCE hInstance) : DirectXGame(hInstance)
 	windowCaption = L"Demo DX11 Game";
 	windowWidth = 800;
 	windowHeight = 600;
-	 
+
 }
 
 MyDemoGame::~MyDemoGame()
@@ -83,7 +83,7 @@ MyDemoGame::~MyDemoGame()
 bool MyDemoGame::Init()
 {
 	// Make sure DirectX initializes properly
-	if( !DirectXGame::Init() )
+	if (!DirectXGame::Init())
 		return false;
 
 	// Create the necessary DirectX buffers to draw something
@@ -103,7 +103,7 @@ bool MyDemoGame::Init()
 
 	entity = Player(playerMesh, playerMat, cam);
 	e = Enemy(enemyMesh, enemyMat);
-	
+
 	terrain = GameEntity(feild, terrainMat);
 	terrain.setPosition(0, -3, 0);
 	terrain.calcWorld();
@@ -122,7 +122,7 @@ void MyDemoGame::CreateGeometryBuffers()
 	sphere = new Mesh("sphere.obj", device);
 	enemyMesh = new Mesh("Enemy.obj", device);
 	playerMesh = new Mesh("Player.obj", device);
-	genrateTerrain(device, 1, 128);
+	genrateTerrain(device, 1, 512);
 }
 
 // Loads shaders from compiled shader object (.cso) files, and uses the
@@ -135,8 +135,8 @@ void MyDemoGame::LoadShadersAndInputLayout()
 	// We can't set up the input layout yet since we need the actual vert shader
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
 	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,	0, 0,	D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,	D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
 
@@ -162,7 +162,7 @@ void MyDemoGame::LoadShadersAndInputLayout()
 
 	device->CreateSamplerState(&sam, &sampler);
 
-	mat1 = new Material(vertexShader, pixelShader,srv,sampler);
+	mat1 = new Material(vertexShader, pixelShader, srv, sampler);
 
 
 	//Enemy Material
@@ -253,7 +253,7 @@ void MyDemoGame::OnResize()
 	{
 		cam->updateProjection(AspectRatio());
 	}
-	
+
 
 }
 #pragma endregion
@@ -299,7 +299,7 @@ void MyDemoGame::UpdateScene(float dt)
 
 
 		terrain.update(dt);
-	
+
 	}
 	cam->update(dt);
 	manager.manageInput();
@@ -367,19 +367,48 @@ void MyDemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 {
 	if (cam != 0 && btnState & 0x001)
 	{
-		cam->mouse(x- prevMousePos.x, y- prevMousePos.y);
+		cam->mouse(x - prevMousePos.x, y - prevMousePos.y);
 	}
-	
+
 	prevMousePos.x = x;
 	prevMousePos.y = y;
 }
 #pragma endregion
 
+XMFLOAT3 avrage(int num, XMFLOAT3 currentValue, XMVECTOR numToAdd)
+{
+
+	XMVECTOR temp = XMVectorSet(currentValue.x, currentValue.y, currentValue.z , 0);
+
+	XMFLOAT3 value;
+
+	if (num == 0)
+	{
+		XMStoreFloat3(&value, numToAdd);
+		return value;
+	}
+
+
+
+	temp *= num;
+	temp += numToAdd;
+	temp /= num + 1;
+	XMStoreFloat3(&value, temp);
+	return value;
+
+}
+
+
+
 void MyDemoGame::genrateTerrain(ID3D11Device * theDevice, float dist, int size)
 {
 
-	Vertex a[16384];
-	unsigned int in[98304];
+	Vertex * a = new Vertex[size * size];
+	unsigned int * in = new unsigned int[size * size * 6];
+	unsigned int * nums = new unsigned int[size * size];
+	//tri * tris = new tri[size * size * 2];
+
+
 
 	int curentIndex = 0;
 
@@ -388,10 +417,11 @@ void MyDemoGame::genrateTerrain(ID3D11Device * theDevice, float dist, int size)
 		for (int j = 0; j < size; j++)
 		{
 			Vertex temp;
-			temp.Position = XMFLOAT3((dist * i) - (dist* (size -1) / 2), cos(i * 3.14 * 2 /size) * 5 , (dist * j) - (dist* (size - 1) / 2));
+			temp.Position = XMFLOAT3((dist * i) - (dist* (size - 1) / 2), cos(i * 3.14 * 2 / size) * 5, (dist * j) - (dist* (size - 1) / 2));
 			temp.Normal = XMFLOAT3(sin(i * 3.14 * 2 / size), 1, 0);
+			//temp.Normal = XMFLOAT3(0, 0, 0);
 
-			float u = float(i) * 16 / float(size -1);
+			float u = float(i) * 16 / float(size - 1);
 			float v = float(j) * 16 / float(size - 1);
 
 			temp.UV = XMFLOAT2(u, v);
@@ -410,31 +440,81 @@ void MyDemoGame::genrateTerrain(ID3D11Device * theDevice, float dist, int size)
 
 			if (i + size < size * size)
 			{
+				XMVECTOR aPos;
+				XMVECTOR bPos;
+				XMVECTOR cPos;
+				XMVECTOR ba;
+				XMVECTOR bc;
+				XMVECTOR n;
+
 				in[index] = i;
-				index++;
-				
-				in[index] = i + 1;
+				aPos = XMVectorSet(a[in[index]].Position.x, a[in[index]].Position.y, a[in[index]].Position.z, 0);
 				index++;
 
-				in[index] = i + size;
+				in[index] = i + 1;
+				bPos = XMVectorSet(a[in[index]].Position.x, a[in[index]].Position.y, a[in[index]].Position.z, 0);
 				index++;
+				in[index] = i + size;
+				cPos = XMVectorSet(a[in[index]].Position.x, a[in[index]].Position.y, a[in[index]].Position.z, 0);
+				index++;
+
+				bc = bPos - cPos;
+				ba = bPos - aPos;
+
+				n = XMVector3Cross(ba, bc);
+
+				a[in[index - 3]].Normal = avrage(nums[in[index - 3]], a[in[index - 3]].Normal, n);
+				nums[in[index - 3]] ++;
+				a[in[index - 2]].Normal = avrage(nums[in[index - 2]], a[in[index - 2]].Normal, n);
+				nums[in[index - 2]] ++;
+				a[in[index - 1]].Normal = avrage(nums[in[index -1]], a[in[index -1]].Normal, n);
+				nums[in[index - 1]] ++;
+
+
 			}
 			if (i - size >= 0)
 			{
+				XMVECTOR aPos;
+				XMVECTOR bPos;
+				XMVECTOR cPos;
+				XMVECTOR ba;
+				XMVECTOR bc;
+				XMVECTOR n;
+
 				in[index] = i;
+				aPos = XMVectorSet(a[in[index]].Position.x, a[in[index]].Position.y, a[in[index]].Position.z, 0);
 				index++;
 
 				in[index] = i + 1 - size;
+				bPos = XMVectorSet(a[in[index]].Position.x, a[in[index]].Position.y, a[in[index]].Position.z, 0);
 				index++;
 
 				in[index] = i + 1;
+				cPos = XMVectorSet(a[in[index]].Position.x, a[in[index]].Position.y, a[in[index]].Position.z, 0);
 				index++;
+
+				bc = bPos - cPos;
+				ba = bPos - aPos;
+
+				n = XMVector3Cross(ba, bc);
+
+				a[in[index - 3]].Normal = avrage(nums[in[index - 3]], a[in[index - 3]].Normal, n);
+				nums[in[index - 3]] ++;
+				a[in[index - 2]].Normal = avrage(nums[in[index - 2]], a[in[index - 2]].Normal, n);
+				nums[in[index - 2]] ++;
+				a[in[index - 1]].Normal = avrage(nums[in[index - 1]], a[in[index - 1]].Normal, n);
+				nums[in[index - 1]] ++;
+
 			}
 		}
+
+
 	}
 
 	feild = new Mesh(a, size* size, in, index, theDevice);
 
-	float ayhnytuny = 5;
+	delete[] a;
+	delete[]in;
+	delete[] nums;
 
 }
