@@ -70,6 +70,7 @@
   <ItemGroup>
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Emitter.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameEntity.cpp" />
     <ClCompile Include="GameManager.cpp" />
@@ -80,6 +81,7 @@
     <ClCompile Include="DirectXGame.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="OBB.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SimpleShader.cpp" />
     <ClCompile Include="Terrain.cpp" />
@@ -87,6 +89,7 @@
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Emitter.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameManager.h" />
@@ -97,6 +100,7 @@
     <ClInclude Include="DirectXGame.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="OBB.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SimpleShader.h" />
     <ClInclude Include="Terrain.h" />

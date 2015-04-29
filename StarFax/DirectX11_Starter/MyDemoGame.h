@@ -15,6 +15,7 @@
 #include "WICTextureLoader.h"
 #include "GameManager.h"
 #include "Terrain.h"
+#include "Emitter.h"
 
 // Include run-time memory checking in debug builds
 #if defined(DEBUG) || defined(_DEBUG)
@@ -92,6 +93,8 @@ public:
 	GameEntity terrain = GameEntity(feild, mat1);
 
 	Player entity = Player(box, mat1, cam);
+
+	Emitter* snowEmitter;
 
 private:
 	// Initialization for our "game" demo

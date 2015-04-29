@@ -111,6 +111,8 @@ bool MyDemoGame::Init()
 	e.setPosition(-3, 0, 10);
 	e.calcWorld();
 
+	snowEmitter = new Emitter(XMFLOAT3(-7, 0, 5), XMFLOAT3(3, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 0), sphere, terrainMat, 100, 0.05, true);
+
 	// Successfully initialized
 	return true;
 }
@@ -297,6 +299,7 @@ void MyDemoGame::UpdateScene(float dt)
 			}
 		}
 
+		snowEmitter->update(dt);
 
 		terrain.update(dt);
 
@@ -333,6 +336,8 @@ void MyDemoGame::DrawScene()
 		for each(Bullet b in bullets) {
 			b.draw(deviceContext, cam);
 		}
+
+		snowEmitter->drawParticles(deviceContext, cam);
 
 		terrain.draw(deviceContext, cam);
 	}
