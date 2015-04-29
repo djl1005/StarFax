@@ -177,10 +177,7 @@ Mesh::Mesh(char* fileName, ID3D11Device * theDevice)
 	HR(theDevice->CreateBuffer(&ibd, &initialIndexData, &indexBuffer));
 
 	numIndices = triangleCounter;
-
-
 }
-
 
 Mesh::~Mesh()
 {

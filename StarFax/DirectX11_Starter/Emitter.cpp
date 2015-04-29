@@ -21,11 +21,31 @@ Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT3 col, Mesh* m
 	idleTime = 5;
 	lifeTime = 5;
 	totalParticles = 0;
+
+	
 }
 
 
 Emitter::~Emitter()
 {
+}
+
+void Emitter::setBlendState(ID3D11Device* device)
+{
+	D3D11_BLEND_DESC blendStateDesc;
+	ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
+	blendStateDesc.AlphaToCoverageEnable = TRUE;
+	blendStateDesc.IndependentBlendEnable = FALSE;
+	blendStateDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
+	blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	device->CreateBlendState(&blendStateDesc, &blendStateAlphaToCoverage);
 }
 
 Mesh* Emitter::getMesh(){
@@ -97,13 +117,14 @@ void Emitter::update(float dt)
 		//Otherwise move the particle
 		else
 		{
-			particles[i]->update(dt);
+			particles[i]->update(dt, XMFLOAT3(0, 0, 0));
 		}
 	}
 }
 
 void Emitter::drawParticles(ID3D11DeviceContext* context, Camera* cam)
 {
+	context->OMSetBlendState(blendStateAlphaToCoverage, NULL, 0xFFFFFF);
 	for each (Particle* p in particles)
 	{
 		p->draw(context, cam);

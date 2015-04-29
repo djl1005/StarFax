@@ -18,7 +18,7 @@ public:
 	void calcWorld();
 	void offsetPosition(float, float, float);
 
-	void update(float dt);
+	void update(float dt, XMFLOAT3 vel);
 	void draw(ID3D11DeviceContext* context, Camera* cam);
 
 private:

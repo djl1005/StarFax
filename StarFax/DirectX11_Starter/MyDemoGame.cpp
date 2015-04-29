@@ -111,7 +111,8 @@ bool MyDemoGame::Init()
 	e.setPosition(-3, 0, 10);
 	e.calcWorld();
 
-	snowEmitter = new Emitter(XMFLOAT3(-7, 0, 5), XMFLOAT3(3, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 0), sphere, terrainMat, 100, 0.05, true);
+	snowEmitter = new Emitter(XMFLOAT3(-7, 2, 5), XMFLOAT3(3, -0.5, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 0), particleMesh, snowFlake, 1000, 0.03, true);
+	snowEmitter->setBlendState(device);
 
 	// Successfully initialized
 	return true;
@@ -125,6 +126,8 @@ void MyDemoGame::CreateGeometryBuffers()
 	enemyMesh = new Mesh("Enemy.obj", device);
 	playerMesh = new Mesh("Player.obj", device);
 	genrateTerrain(device, 1, 512);
+
+	particleMesh = new Mesh("Particle.obj", device);
 }
 
 // Loads shaders from compiled shader object (.cso) files, and uses the
@@ -160,8 +163,6 @@ void MyDemoGame::LoadShadersAndInputLayout()
 	sam.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sam.MaxLOD = D3D11_FLOAT32_MAX;
 
-	//device->CreateSamplerState(&sam, &sampler);
-
 	device->CreateSamplerState(&sam, &sampler);
 
 	mat1 = new Material(vertexShader, pixelShader, srv, sampler);
@@ -178,9 +179,7 @@ void MyDemoGame::LoadShadersAndInputLayout()
 	sam.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sam.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	sam.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sam.MaxLOD = D3D11_FLOAT32_MAX;
-
-	//device->CreateSamplerState(&sam, &sampler);
+	sam.MaxLOD = D3D11_FLOAT32_MAX;;
 
 	device->CreateSamplerState(&sam, &sampler);
 
@@ -201,8 +200,6 @@ void MyDemoGame::LoadShadersAndInputLayout()
 	sam.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sam.MaxLOD = D3D11_FLOAT32_MAX;
 
-	//device->CreateSamplerState(&sam, &sampler);
-
 	device->CreateSamplerState(&sam, &sampler);
 
 	playerMat = new Material(vertexShader, pixelShader, srv, sampler);
@@ -221,11 +218,26 @@ void MyDemoGame::LoadShadersAndInputLayout()
 	sam.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sam.MaxLOD = D3D11_FLOAT32_MAX;
 
-	//device->CreateSamplerState(&sam, &sampler);
-
 	device->CreateSamplerState(&sam, &sampler);
 
 	terrainMat = new Material(vertexShader, pixelShader, srv, sampler);
+
+	//Snowflake Material	  
+	CreateWICTextureFromFile(device, deviceContext, L"SnowFlake.png", 0, &srv);
+
+	//D3D11_SAMPLER_DESC sam;
+
+	ZeroMemory(&sam, sizeof(D3D11_SAMPLER_DESC));
+
+	sam.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sam.MaxLOD = D3D11_FLOAT32_MAX;
+
+	device->CreateSamplerState(&sam, &sampler);
+
+	snowFlake = new Material(vertexShader, pixelShader, srv, sampler);
 
 
 

@@ -2,6 +2,7 @@ c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\vc120.pdb
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\vc120.idb
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\bullet.obj
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\camera.obj
+c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\emitter.obj
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\enemy.obj
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\gameentity.obj
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\gamemanager.obj
@@ -12,11 +13,10 @@ c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\dxerr.obj
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\directxgame.obj
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\gametimer.obj
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\obb.obj
+c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\particle.obj
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\player.obj
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\simpleshader.obj
 c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\terrain.obj
-c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\emitter.obj
-c:\users\cody\documents\github\starfax\starfax\directx11_starter\debug\particle.obj
 c:\users\cody\documents\github\starfax\starfax\debug\pixelshader.cso
 c:\users\cody\documents\github\starfax\starfax\debug\vertexshader.cso
 c:\users\cody\documents\github\starfax\starfax\debug\directx11_starter.ilk

@@ -27,6 +27,8 @@ public:
 
 	void drawParticles(ID3D11DeviceContext* context, Camera* cam);
 
+	void setBlendState(ID3D11Device* device);
+
 private:
 	XMFLOAT3 startPos;
 	XMFLOAT3 startVel;
@@ -38,6 +40,8 @@ private:
 
 	Mesh* mesh;
 	Material* material;
+
+	ID3D11BlendState* blendStateAlphaToCoverage;
 
 
 	float lifeTime;

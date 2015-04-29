@@ -66,10 +66,12 @@ public:
 	Mesh * playerMesh;
 	Mesh * enemyMesh;
 	Mesh * mesh3;
+	Mesh * particleMesh;
 	Material* mat1;
 	Material* enemyMat;
 	Material* playerMat;
 	Material* terrainMat;
+	Material* snowFlake;
 
 	Mesh * feild; 
 

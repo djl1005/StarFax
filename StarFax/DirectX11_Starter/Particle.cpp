@@ -7,7 +7,7 @@ Particle::Particle(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT3 col, Mesh*
 	material = mat;
 
 	position = pos;
-	scale = XMFLOAT3(1, 1, 1);
+	scale = XMFLOAT3(0.25, 0.25, 0.25);
 	rotation = rot;
 	velocity = vel;
 
@@ -54,8 +54,11 @@ void Particle::calcWorld()
 	XMStoreFloat4x4(&world, XMMatrixTranspose(W));
 }
 
-void Particle::update(float dt)
+void Particle::update(float dt, XMFLOAT3 vel)
 { 
+	velocity.x += vel.x;
+	velocity.y += vel.y;
+	velocity.z += vel.z;
 	offsetPosition(velocity.x * dt, velocity.y * dt, velocity.z * dt);
 	age += dt;
 	calcWorld();
