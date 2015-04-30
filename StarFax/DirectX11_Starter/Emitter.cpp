@@ -1,7 +1,7 @@
 #include "Emitter.h"
 
 
-Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT3 col, Mesh* m, Material* mat, float numParticles, float eRate, bool loop)
+Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT4 col, Mesh* m, Material* mat, float numParticles, float eRate, bool loop)
 {
 	//Set particle starting values
 	startPos = pos;
@@ -66,7 +66,7 @@ XMFLOAT3 Emitter::getStartVel()
 	return startVel;
 }
 
-XMFLOAT3 Emitter::getStartCol()
+XMFLOAT4 Emitter::getStartCol()
 {
 	return startCol;
 }

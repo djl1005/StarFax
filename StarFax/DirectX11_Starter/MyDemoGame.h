@@ -113,6 +113,7 @@ private:
 	//unsigned int in[96];
 
 	SimplePixelShader * pixelShader;
+	SimplePixelShader * particlePixelShader;
 	SimpleVertexShader * vertexShader;
 
 	// The matrices to go from model space

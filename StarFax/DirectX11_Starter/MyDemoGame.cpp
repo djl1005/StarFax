@@ -111,7 +111,7 @@ bool MyDemoGame::Init()
 	e.setPosition(-3, 0, 10);
 	e.calcWorld();
 
-	snowEmitter = new Emitter(XMFLOAT3(-7, 2, 5), XMFLOAT3(3, -0.5, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 0), particleMesh, snowFlake, 1000, 0.03, true);
+	snowEmitter = new Emitter(XMFLOAT3(-7, 2, 5), XMFLOAT3(3, -0.5, 0), XMFLOAT3(0, 0, 0), XMFLOAT4(1, 0, 0, 1), particleMesh, snowFlake, 1000, 0.03, true);
 	snowEmitter->setBlendState(device);
 
 	// Successfully initialized
@@ -147,8 +147,10 @@ void MyDemoGame::LoadShadersAndInputLayout()
 
 	pixelShader = new SimplePixelShader(device, deviceContext);
 	vertexShader = new SimpleVertexShader(device, deviceContext);
+	particlePixelShader = new SimplePixelShader(device, deviceContext);
 
 	pixelShader->LoadShaderFile(L"PixelShader.cso");
+	particlePixelShader->LoadShaderFile(L"ParticlePixelShader.cso");
 	vertexShader->LoadShaderFile(L"VertexShader.cso");
 
 	CreateWICTextureFromFile(device, deviceContext, L"Brick.jpg", 0, &srv);
@@ -237,7 +239,7 @@ void MyDemoGame::LoadShadersAndInputLayout()
 
 	device->CreateSamplerState(&sam, &sampler);
 
-	snowFlake = new Material(vertexShader, pixelShader, srv, sampler);
+	snowFlake = new Material(vertexShader, particlePixelShader, srv, sampler);
 
 
 
@@ -279,6 +281,7 @@ void MyDemoGame::UpdateScene(float dt)
 {
 	// Take input, update game logic, etc.
 
+	cam->update(dt);
 
 	//entity.offsetPosition(1 * dt, 0, 0);
 	//entity.offsetRotation(0, 0,  3 * dt);
@@ -316,7 +319,7 @@ void MyDemoGame::UpdateScene(float dt)
 		terrain.update(dt);
 
 	}
-	cam->update(dt);
+	
 	manager.manageInput();
 }
 

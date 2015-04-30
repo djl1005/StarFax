@@ -12,7 +12,7 @@ using namespace std;
 class Emitter
 {
 public:
-	Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT3 col, Mesh* m, Material* mat, float numParticles, float eRate, bool loop);
+	Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT4 col, Mesh* m, Material* mat, float numParticles, float eRate, bool loop);
 	~Emitter();
 
 	Mesh* getMesh();
@@ -20,7 +20,7 @@ public:
 
 	XMFLOAT3 getStartPos();
 	XMFLOAT3 getStartVel();
-	XMFLOAT3 getStartCol();
+	XMFLOAT4 getStartCol();
 	XMFLOAT3 getStartRot();
 
 	void update(float dt);
@@ -32,10 +32,10 @@ public:
 private:
 	XMFLOAT3 startPos;
 	XMFLOAT3 startVel;
-	XMFLOAT3 startCol;
+	XMFLOAT4 startCol;
 	XMFLOAT3 startRot;
 
-	XMFLOAT3 endCol;
+	XMFLOAT4 endCol;
 	XMFLOAT3 endRot;
 
 	Mesh* mesh;

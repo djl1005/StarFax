@@ -9,7 +9,7 @@ using namespace DirectX;
 class Particle
 {
 public:
-	Particle(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT3 col, Mesh* m, Material* mat);
+	Particle(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT4 col, Mesh* m, Material* mat);
 	~Particle();
 	
 	float getAge();
@@ -26,7 +26,7 @@ private:
 	XMFLOAT3 velocity;
 	XMFLOAT3 scale;
 	XMFLOAT3 rotation;
-	XMFLOAT3 rgbValue;
+	XMFLOAT4 rgbValue;
 	float age;
 
 	Mesh * mesh;

@@ -1,9 +1,6 @@
 
 // Defines the input to this pixel shader
 // - Should match the output of our corresponding vertex shader
-
-
-
 struct VertexToPixel
 {
 	float4 position		: SV_POSITION;	// System Value Position - Has specific meaning to the pipeline!

@@ -15,6 +15,8 @@ public:
 
 private:
 	float speed;
+	float timer;
+	float SHOTTIME;
 	Camera* camera;
 	float camPosition;
 };
