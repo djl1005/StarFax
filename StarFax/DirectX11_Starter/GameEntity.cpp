@@ -176,17 +176,15 @@ void GameEntity::calcWorld()
 		colider.updateSat(this->position, this->rotiation);
 }
 
-void GameEntity::draw(ID3D11DeviceContext * deviceContext, Camera * cam)
+void GameEntity::draw(ID3D11DeviceContext * deviceContext, Camera * cam, char * texture)
 {
 
 	getMaterial()->getVerShader()->SetMatrix4x4("world", getWorld());
 	getMaterial()->getVerShader()->SetMatrix4x4("view", cam->getViewMat());
 	getMaterial()->getVerShader()->SetMatrix4x4("projection", cam->getProjection());
 
-	getMaterial()->setShaders();
+	getMaterial()->setShaders(texture);
 	getMesh()->draw(deviceContext);
-
-
 }
 
 GameEntity::~GameEntity()

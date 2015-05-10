@@ -53,6 +53,7 @@ DirectXGame::DirectXGame(HINSTANCE hInstance)
 	swapChain(0),
 	depthStencilBuffer(0),
 	renderTargetView(0),
+	shadowMapStencilView(0),
 	depthStencilView(0)
 {
 	// Zero out the viewport struct
@@ -67,6 +68,7 @@ DirectXGame::~DirectXGame(void)
 {
 	// Release the DX stuff
 	ReleaseMacro(renderTargetView);
+	ReleaseMacro(shadowMapStencilView);
 	ReleaseMacro(depthStencilView);
 	ReleaseMacro(swapChain);
 	ReleaseMacro(depthStencilBuffer);
@@ -228,6 +230,7 @@ void DirectXGame::OnResize()
 	// Release the views, since we'll be destroying
 	// the corresponding buffers.
 	ReleaseMacro(renderTargetView);
+	ReleaseMacro(shadowMapStencilView);
 	ReleaseMacro(depthStencilView);
 	ReleaseMacro(depthStencilBuffer);
 
@@ -269,6 +272,34 @@ void DirectXGame::OnResize()
 		depthStencilDesc.SampleDesc.Count   = 1;
 		depthStencilDesc.SampleDesc.Quality = 0;
 	}
+
+	D3D11_TEXTURE2D_DESC shadowMapDesc;
+	ZeroMemory(&shadowMapDesc, sizeof(D3D11_TEXTURE2D_DESC));
+	shadowMapDesc.Width = windowWidth;
+	shadowMapDesc.Height = windowHeight;
+	shadowMapDesc.MipLevels = 1;
+	shadowMapDesc.ArraySize = 1;
+	shadowMapDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	shadowMapDesc.Usage = D3D11_USAGE_DEFAULT;
+	shadowMapDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	shadowMapDesc.CPUAccessFlags = 0;
+	shadowMapDesc.MiscFlags = 0;
+	if (enable4xMsaa)
+	{
+		// Turn on 4x MultiSample Anti Aliasing
+		// This must match swap chain MSAA values
+		shadowMapDesc.SampleDesc.Count = 4;
+		shadowMapDesc.SampleDesc.Quality = msaa4xQuality - 1;
+	}
+	else
+	{
+		// No MSAA
+		shadowMapDesc.SampleDesc.Count = 1;
+		shadowMapDesc.SampleDesc.Quality = 0;
+	}
+
+	HR(device->CreateTexture2D(&shadowMapDesc, 0, &depthStencilBuffer));
+	HR(device->CreateDepthStencilView(depthStencilBuffer, 0, &shadowMapStencilView));
 
 	// Create the depth/stencil buffer and corresponding view
 	HR(device->CreateTexture2D(&depthStencilDesc, 0, &depthStencilBuffer));

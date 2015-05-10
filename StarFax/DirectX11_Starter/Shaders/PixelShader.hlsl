@@ -5,7 +5,8 @@ struct VertexToPixel
 {
 	float4 position		: SV_POSITION;	// System Value Position - Has specific meaning to the pipeline!
 	float3 normal		: NORMAL;
-	float2 UV			: TEXCOORD;
+	float2 UV			: TEXCOORD0;
+	float4 lightViewPos	: TEXCOORD1;
 };
 
 struct DirectionalLight
@@ -21,6 +22,7 @@ cbuffer perModel : register(b0)
 };
 
 Texture2D diffuseTexture : register(t0);
+Texture2D depthTexture : register(t1);
 
 SamplerState basicSampler : register(s0);
 
@@ -42,12 +44,34 @@ float4 calcLight(float3 normal, DirectionalLight light)
 // Entry point for this pixel shader
 float4 main(VertexToPixel input) : SV_TARGET
 {
+	float bias = 0.001f;
+	float4 color = light.AmbientColor;
+	float2 projectTexCoord;
+	projectTexCoord.x = input.lightViewPos.x / input.lightViewPos.w / 2.0f + 0.5f;
+	projectTexCoord.y = -input.lightViewPos.y / input.lightViewPos.w / 2.0f + 0.5f;
 
-	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.UV);
+	if (saturate(projectTexCoord.x) == projectTexCoord.x 
+		&& saturate(projectTexCoord.y) == projectTexCoord.y)
+	{
+		float depthValue = depthTexture.Sample(basicSampler, projectTexCoord).r;
+		float lightDepthValue = input.lightViewPos.z / input.lightViewPos.w;
+		lightDepthValue = lightDepthValue - bias;
 
-	
+		if (lightDepthValue > depthValue)
+		{
+			float3 normalLightDir = normalize(light.Direction);
+			float diffuseBrightness = saturate(dot(input.normal, normalLightDir));
+			color += light.DiffuseColor * diffuseBrightness;
+		}
+	}
 
+	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.lightViewPos);
+
+	//without shadows
 	return surfaceColor * calcLight(input.normal, light);
+
+	//with shadows
+	//return surfaceColor * color;
 
 }
 

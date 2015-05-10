@@ -85,6 +85,7 @@ public:
 	DirectionalLight dlight2;
 
 	Camera * cam;
+	Camera * lightCam;
 
 	GameManager manager;
 

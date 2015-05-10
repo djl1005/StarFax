@@ -95,6 +95,7 @@ protected:
 	ID3D11Texture2D* depthStencilBuffer;
 	ID3D11RenderTargetView* renderTargetView;
 	ID3D11DepthStencilView* depthStencilView;
+	ID3D11DepthStencilView* shadowMapStencilView;
 	D3D11_VIEWPORT viewport;
 	D3D_DRIVER_TYPE driverType;
 	D3D_FEATURE_LEVEL featureLevel;

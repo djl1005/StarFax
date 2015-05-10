@@ -28,11 +28,12 @@ ID3D11SamplerState * Material::getState()
 	return state;
 }
 
-void Material::setShaders()
+void Material::setShaders(char * texture)
 {
 
 	pixShader->SetSamplerState("basicSampler", state);
-	pixShader->SetShaderResourceView("diffuseTexture", srv);
+	pixShader->SetShaderResourceView(texture, srv);
+	//pixShader->SetShaderResourceView("diffuseTexture", srv);
 
 	verShader->SetShader(true);
 	pixShader->SetShader(true);

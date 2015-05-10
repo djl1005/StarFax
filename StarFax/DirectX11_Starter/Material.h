@@ -7,7 +7,7 @@ public:
 	Material(SimpleVertexShader*, SimplePixelShader*, ID3D11ShaderResourceView * s, ID3D11SamplerState * sam);
 	~Material();
 
-	void setShaders();
+	void setShaders(char * texture);
 
 	SimpleVertexShader * getVerShader();
 	SimplePixelShader * getPixShader();

@@ -92,14 +92,12 @@ bool MyDemoGame::Init()
 	// Load pixel & vertex shaders, and then create an input layout
 	LoadShadersAndInputLayout();
 
-	// Set up camera-related matrices
-	InitializeCameraMatrices();
-
 	dlight1.AmbientColor = XMFLOAT4(0.1, 0.1, 0.1, 1);
 	dlight1.DiffuseColor = XMFLOAT4(.8, .8, .8, 1);
 	dlight1.Direction = XMFLOAT3(0, -1, .3);
 
-
+	// Set up camera-related matrices
+	InitializeCameraMatrices();
 
 	entity = Player(playerMesh, playerMat, cam);
 	e = Enemy(enemyMesh, enemyMat);
@@ -249,9 +247,10 @@ void MyDemoGame::LoadShadersAndInputLayout()
 void MyDemoGame::InitializeCameraMatrices()
 {
 	cam = new Camera(XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, -1), 0, 0);
+	lightCam = new Camera(XMFLOAT3(0, 10, 0), dlight1.Direction, 0, 0);
 
 	cam->updateProjection(AspectRatio());
-
+	lightCam->updateProjection(AspectRatio());
 }
 
 #pragma endregion
@@ -343,18 +342,32 @@ void MyDemoGame::DrawScene()
 
 	pixelShader->SetData("light", &dlight1, sizeof(DirectionalLight));
 
+	deviceContext->OMSetRenderTargets(0, nullptr, shadowMapStencilView);
+
+	//shadow draw
 	if (manager.getState() == 1)
 	{
-		entity.draw(deviceContext, cam);
-		e.draw(deviceContext, cam);
+		entity.draw(deviceContext, lightCam, "depthTexture");
+		e.draw(deviceContext, lightCam, "depthTexture");
+
+		terrain.draw(deviceContext, lightCam, "depthTexture");
+	}
+	
+	deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+
+	//normal draw
+	if (manager.getState() == 1)
+	{
+		entity.draw(deviceContext, cam, "diffuseTexture");
+		e.draw(deviceContext, cam, "diffuseTexture");
 
 		for each(Bullet b in bullets) {
-			b.draw(deviceContext, cam);
+			b.draw(deviceContext, cam, "diffuseTexture");
 		}
 
 		snowEmitter->drawParticles(deviceContext, cam);
 
-		terrain.draw(deviceContext, cam);
+		terrain.draw(deviceContext, cam, "diffuseTexture");
 	}
 
 	// Present the buffer

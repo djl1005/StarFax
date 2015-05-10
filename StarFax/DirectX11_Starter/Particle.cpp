@@ -69,6 +69,6 @@ void Particle::draw(ID3D11DeviceContext* context, Camera* cam)
 	material->getVerShader()->SetMatrix4x4("view", cam->getViewMat());
 	material->getVerShader()->SetMatrix4x4("projection", cam->getProjection());
 	material->getPixShader()->SetFloat4("color", rgbValue);
-	material->setShaders();
+	material->setShaders("diffuseTexture");
 	mesh->draw(context);
 }

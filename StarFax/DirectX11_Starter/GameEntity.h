@@ -35,7 +35,7 @@ public:
 
 	void calcWorld();
 
-	void draw(ID3D11DeviceContext * deviceContext, Camera * cam);
+	void draw(ID3D11DeviceContext * deviceContext, Camera * cam, char * texture);
 
 	XMFLOAT3 getPosition();
 	XMFLOAT3 getScale();

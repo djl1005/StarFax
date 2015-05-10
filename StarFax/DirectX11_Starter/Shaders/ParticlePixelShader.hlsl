@@ -26,5 +26,4 @@ float4 main(VertexToPixel input) : SV_TARGET
 	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.UV) * color;
 
 	return surfaceColor;
-
 }
