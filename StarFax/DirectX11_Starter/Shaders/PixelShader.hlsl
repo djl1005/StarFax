@@ -31,11 +31,13 @@ float4 calcLight(float3 normal, DirectionalLight light)
 
 	float3 tolight = normalize(-light.Direction);
 
-	normal = normalize(normal);
+	//normal = normalize(normal);
 
 	float NdotL = dot(normal, tolight);
 
 	NdotL = saturate(NdotL);
+
+	return (light.DiffuseColor * NdotL);
 
 	return (light.DiffuseColor * NdotL) + light.AmbientColor;
 
@@ -49,7 +51,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 	float2 projectTexCoord;
 	projectTexCoord.x = input.lightViewPos.x / input.lightViewPos.w / 2.0f + 0.5f;
 	projectTexCoord.y = -input.lightViewPos.y / input.lightViewPos.w / 2.0f + 0.5f;
-
+	
 	if (saturate(projectTexCoord.x) == projectTexCoord.x 
 		&& saturate(projectTexCoord.y) == projectTexCoord.y)
 	{
@@ -59,19 +61,22 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 		if (lightDepthValue > depthValue)
 		{
-			float3 normalLightDir = normalize(light.Direction);
-			float diffuseBrightness = saturate(dot(input.normal, normalLightDir));
-			color += light.DiffuseColor * diffuseBrightness;
+			//float3 normalLightDir = normalize(light.Direction);
+			//float diffuseBrightness = saturate(dot(input.normal, normalLightDir));
+			//color += light.DiffuseColor * diffuseBrightness;
+			color = calcLight(input.normal, light);
+			//color.w = 1;
 		}
 	}
+	
 
-	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.lightViewPos);
+	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.UV);
 
 	//without shadows
-	return surfaceColor * calcLight(input.normal, light);
+	//return surfaceColor * calcLight(input.normal, light);
 
 	//with shadows
-	//return surfaceColor * color;
-
+	return surfaceColor * color;
+	//return color;
 }
 

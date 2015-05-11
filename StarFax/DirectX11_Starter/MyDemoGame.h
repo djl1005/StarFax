@@ -111,9 +111,6 @@ private:
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
 
-	//Vertex a[25];
-	//unsigned int in[96];
-
 	SimplePixelShader * pixelShader;
 	SimpleVertexShader * vertexShader;
 
@@ -123,12 +120,16 @@ private:
 	bool spawnFlip;
 	int frameCount;
 
+	
+
 	SimpleVertexShader* particleVertexShader;
 	SimplePixelShader* particlePixelShader;
 	SimpleGeometryShader* particleGeometryShader;
 
 	SimpleVertexShader* spawnPVS;
 	SimpleGeometryShader* spawnPGS;
+
+	SimpleVertexShader* shadowVertexShader;
 
 	// The matrices to go from model space
 	// to screen space

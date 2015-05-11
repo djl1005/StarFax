@@ -92,9 +92,9 @@ bool MyDemoGame::Init()
 	// Load pixel & vertex shaders, and then create an input layout
 	LoadShadersAndInputLayout();
 
-	dlight1.AmbientColor = XMFLOAT4(0.1, 0.1, 0.1, 1);
+	dlight1.AmbientColor = XMFLOAT4(0.3, 0.3, 0.3, 1);
 	dlight1.DiffuseColor = XMFLOAT4(.8, .8, .8, 1);
-	dlight1.Direction = XMFLOAT3(0, -1, .3);
+	dlight1.Direction = XMFLOAT3(0, -.707, .707);
 
 	// Set up camera-related matrices
 	InitializeCameraMatrices();
@@ -149,6 +149,10 @@ void MyDemoGame::LoadShadersAndInputLayout()
 
 	pixelShader->LoadShaderFile(L"PixelShader.cso");
 	vertexShader->LoadShaderFile(L"VertexShader.cso");
+
+	shadowVertexShader = new SimpleVertexShader(device, deviceContext);
+	shadowVertexShader->LoadShaderFile(L"ShadowVertexShader.cso");
+
 
 	LoadParticleShaders();
 
@@ -272,7 +276,7 @@ void MyDemoGame::LoadParticleShaders()
 void MyDemoGame::InitializeCameraMatrices()
 {
 	cam = new Camera(XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, -1), 0, 0);
-	lightCam = new Camera(XMFLOAT3(0, 10, 0), dlight1.Direction, 0, 0);
+	lightCam = new Camera(XMFLOAT3(0, 100, -100), dlight1.Direction, 0, 0);
 
 	cam->updateProjection(AspectRatio());
 	lightCam->updateProjection(AspectRatio());
@@ -363,6 +367,12 @@ void MyDemoGame::DrawScene()
 		1.0f,
 		0);
 
+	deviceContext->ClearDepthStencilView(
+		shadowMapStencilView,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0f,
+		0);
+
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	pixelShader->SetData("light", &dlight1, sizeof(DirectionalLight));
@@ -372,10 +382,16 @@ void MyDemoGame::DrawScene()
 	//shadow draw
 	if (manager.getState() == 1)
 	{
-		entity.draw(deviceContext, lightCam, "depthTexture");
-		e.draw(deviceContext, lightCam, "depthTexture");
+		
+		entity.draw(deviceContext, lightCam, lightCam, "depthTexture");
+		e.draw(deviceContext, lightCam, lightCam, "depthTexture");
 
-		terrain.draw(deviceContext, lightCam, "depthTexture");
+		terrain.draw(deviceContext, lightCam, lightCam, "depthTexture");
+		
+
+		//entity.drawShadow(deviceContext, shadowVertexShader, lightCam);
+		//e.drawShadow(deviceContext, shadowVertexShader, lightCam);
+		//terrain.drawShadow(deviceContext, shadowVertexShader, lightCam);
 	}
 	
 	deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
@@ -383,16 +399,16 @@ void MyDemoGame::DrawScene()
 	//normal draw
 	if (manager.getState() == 1)
 	{
-		entity.draw(deviceContext, cam, "diffuseTexture");
-		e.draw(deviceContext, cam, "diffuseTexture");
+		entity.draw(deviceContext, cam, lightCam, "diffuseTexture");
+		e.draw(deviceContext, cam, lightCam, "diffuseTexture");
 
 		for each(Bullet b in bullets) {
-			b.draw(deviceContext, cam, "diffuseTexture");
+			b.draw(deviceContext, cam, lightCam, "diffuseTexture");
 		}
 
 		//snowEmitter->drawParticles(deviceContext, cam);
 
-		terrain.draw(deviceContext, cam, "diffuseTexture");
+		terrain.draw(deviceContext, cam, lightCam, "diffuseTexture");
 	}
 
 	// Present the buffer

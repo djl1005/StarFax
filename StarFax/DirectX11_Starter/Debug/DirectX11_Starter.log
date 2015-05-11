@@ -1,7 +1,4 @@
-﻿Build started 5/10/2015 11:56:03 PM.
-     1>Project "C:\Users\Cody\Documents\GitHub\StarFax\StarFax\DirectX11_Starter\DirectX11_Starter.vcxproj" on node 2 (Clean target(s)).
-     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppClean.targets(76,5): warning : The process cannot access the file 'c:\users\cody\documents\github\starfax\starfax\debug\directx11_starter.ilk' because it is being used by another process.
-     1>Done Building Project "C:\Users\Cody\Documents\GitHub\StarFax\StarFax\DirectX11_Starter\DirectX11_Starter.vcxproj" (Clean target(s)).
+﻿Build started 5/11/2015 4:55:50 AM.
 
 Build succeeded.
 

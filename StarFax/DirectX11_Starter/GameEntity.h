@@ -18,6 +18,8 @@ public:
 
 	void update(float dt);
 
+	void drawShadow(ID3D11DeviceContext * deviceContext, SimpleVertexShader * svs, Camera * cam);
+
 	void setPosition(float, float, float);
 	void offsetPosition(float, float, float);
 	void setScale(float, float, float);
@@ -35,7 +37,7 @@ public:
 
 	void calcWorld();
 
-	void draw(ID3D11DeviceContext * deviceContext, Camera * cam, char * texture);
+	void draw(ID3D11DeviceContext * deviceContext, Camera * cam, Camera * lightCam, char * texture);
 
 	XMFLOAT3 getPosition();
 	XMFLOAT3 getScale();
