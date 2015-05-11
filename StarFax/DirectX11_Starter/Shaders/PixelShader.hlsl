@@ -59,7 +59,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 		float lightDepthValue = input.lightViewPos.z / input.lightViewPos.w;
 		lightDepthValue = lightDepthValue - bias;
 
-		if (lightDepthValue > depthValue)
+		if (lightDepthValue < depthValue)
 		{
 			//float3 normalLightDir = normalize(light.Direction);
 			//float diffuseBrightness = saturate(dot(input.normal, normalLightDir));

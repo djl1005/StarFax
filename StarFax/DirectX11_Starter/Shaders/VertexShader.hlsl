@@ -28,7 +28,7 @@ struct VertexToPixel
 	float4 position		: SV_POSITION;	// System Value Position - Has specific meaning to the pipeline!
 	float3 normal		: NORMAL;
 	float2 UV			: TEXCOORD0;
-	float4 lightViewPos	:TEXCOORD1;
+	float4 lightViewPos	: TEXCOORD1;
 };
 
 // The entry point for our vertex shader
@@ -46,9 +46,9 @@ VertexToPixel main( VertexShaderInput input )
 	output.UV = input.uv;
 
 	matrix lightWorldViewProj = mul(mul(world, lightView), lightProjection);
-
 	//output.lightViewPos = mul(world, input.position);
-	output.lightViewPos = mul(lightWorldViewProj, float4(input.position, 1.0f));
+	output.lightViewPos = mul(world, float4(input.position, 1.0f));
+	output.lightViewPos = mul(lightWorldViewProj, output.lightViewPos);
 
 	return output;
 }

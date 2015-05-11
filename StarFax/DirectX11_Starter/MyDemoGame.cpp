@@ -276,7 +276,7 @@ void MyDemoGame::LoadParticleShaders()
 void MyDemoGame::InitializeCameraMatrices()
 {
 	cam = new Camera(XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, -1), 0, 0);
-	lightCam = new Camera(XMFLOAT3(0, 100, -100), dlight1.Direction, 0, 0);
+	lightCam = new Camera(XMFLOAT3(0, 50, -50),dlight1.Direction, 0, 0);
 
 	cam->updateProjection(AspectRatio());
 	lightCam->updateProjection(AspectRatio());
@@ -296,6 +296,7 @@ void MyDemoGame::OnResize()
 	if (cam != 0)
 	{
 		cam->updateProjection(AspectRatio());
+		lightCam->updateProjection(AspectRatio());
 	}
 
 
@@ -310,6 +311,7 @@ void MyDemoGame::UpdateScene(float dt)
 	// Take input, update game logic, etc.
 
 	cam->update(dt);
+	lightCam->update(dt);
 
 	//entity.offsetPosition(1 * dt, 0, 0);
 	//entity.offsetRotation(0, 0,  3 * dt);
