@@ -674,3 +674,240 @@ bool SimplePixelShader::SetSamplerState(std::string name, ID3D11SamplerState* sa
 	// Success
 	return true;
 }
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// ------ SIMPLE GEOMETRY SHADER ----------------------------------------------
+///////////////////////////////////////////////////////////////////////////////
+
+// Constructor just calls the base
+SimpleGeometryShader::SimpleGeometryShader(ID3D11Device* device, ID3D11DeviceContext* context, bool useStreamOut, bool allowStreamOutRasterization)
+	: ISimpleShader(device, context) 
+{ 
+	this->useStreamOut = useStreamOut;
+	this->allowStreamOutRasterization = allowStreamOutRasterization;
+}
+
+// Destructor - Clean up actual shader (base will be called automatically)
+SimpleGeometryShader::~SimpleGeometryShader()
+{
+	CleanUp();
+}
+
+// Handles cleaning up shader and base class destructor
+void SimpleGeometryShader::CleanUp()
+{
+	ISimpleShader::CleanUp();
+	if (shader) { shader->Release(); shader = 0; }
+}
+
+// Creates the DirectX Geometry shader
+//
+// shaderBlob - The shader's compiled code
+//
+// Returns true if shader is created correctly, false otherwise
+bool SimpleGeometryShader::CreateShader(ID3DBlob* shaderBlob)
+{
+	// Clean up first, in the event this method is
+	// called more than once on the same object
+	this->CleanUp();
+
+	// Using stream out?
+	if (useStreamOut)
+		return this->CreateShaderWithStreamOut(shaderBlob);
+
+	// Create the shader from the blob
+	HRESULT result = device->CreateGeometryShader(
+		shaderBlob->GetBufferPointer(),
+		shaderBlob->GetBufferSize(),
+		0,
+		&shader);
+
+	// Check the result
+	return (result == S_OK);
+}
+
+// Creates the DirectX Geometry shader and sets it up for
+// stream output, if possible.
+//
+// shaderBlob - The shader's compiled code
+//
+// Returns true if shader is created correctly, false otherwise
+bool SimpleGeometryShader::CreateShaderWithStreamOut(ID3DBlob* shaderBlob)
+{
+	// Clean up first, in the event this method is
+	// called more than once on the same object
+	this->CleanUp();
+
+	// Reflect shader info
+	ID3D11ShaderReflection* refl;
+	D3DReflect(
+		shaderBlob->GetBufferPointer(),
+		shaderBlob->GetBufferSize(),
+		IID_ID3D11ShaderReflection,
+		(void**)&refl);
+
+	// Get shader info
+	D3D11_SHADER_DESC shaderDesc;
+	refl->GetDesc(&shaderDesc);
+
+	// Set up the output signature
+	streamOutVertexSize = 0;
+	std::vector<D3D11_SO_DECLARATION_ENTRY> soDecl;
+	for (unsigned int i = 0; i < shaderDesc.OutputParameters; i++)
+	{
+		// Get the info about this entry
+		D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
+		refl->GetOutputParameterDesc(i, &paramDesc);
+		
+		// Create the SO Declaration
+		D3D11_SO_DECLARATION_ENTRY entry;
+		entry.SemanticIndex  = paramDesc.SemanticIndex;
+		entry.SemanticName   = paramDesc.SemanticName;
+		entry.Stream         = paramDesc.Stream;
+		entry.StartComponent = 0; // Assume starting at 0
+		entry.OutputSlot     = 0; // Assume the first output slot
+
+		// Check the mask to determine how many components are used
+		entry.ComponentCount = CalcComponentCount(paramDesc.Mask);
+	
+		// Increment the size
+		streamOutVertexSize += entry.ComponentCount * sizeof(float);
+
+		// Add to the declaration
+		soDecl.push_back(entry);
+	}
+
+	// Rasterization allowed?
+	unsigned int rast = allowStreamOutRasterization ? 0 : D3D11_SO_NO_RASTERIZED_STREAM;
+
+	// Create the shader
+	HRESULT result = device->CreateGeometryShaderWithStreamOutput(
+		shaderBlob->GetBufferPointer(), // Shader blob pointer
+		shaderBlob->GetBufferSize(),    // Shader blob size
+		&soDecl[0],                     // Stream out declaration
+		soDecl.size(),                  // Number of declaration entries
+		NULL,                           // Buffer strides (not used - assume tightly packed?)
+		0,                              // No buffer strides
+		rast,                           // Index of the stream to rasterize (if any)
+		NULL,                           // Not using class linkage
+		&shader);
+	
+	return (result == S_OK);
+}
+
+// Creates a vertex buffer that is compatible with the stream output
+// delcaration that was used to create the shader.  This buffer will
+// not be cleaned up (Released) by the simple shader - you must clean
+// it up yourself when you're done with it.  Immediately returns
+// false if the shader was not created with stream output, the shader
+// isn't valid or the determined stream out vertex size is zero.
+//
+// buffer - Pointer to an ID3D11Buffer pointer to hold the buffer ref
+// vertexCount - Amount of vertices the buffer should hold
+//
+// Returns true if buffer is created successfully AND stream output
+// was used to create the shader.  False otherwise.
+bool SimpleGeometryShader::CreateCompatibleStreamOutBuffer(ID3D11Buffer** buffer, int vertexCount)
+{
+	// Was stream output actually used?
+	if (!this->useStreamOut || !shaderValid || streamOutVertexSize == 0)
+		return false;
+
+	// Set up the buffer description
+	D3D11_BUFFER_DESC desc;
+	desc.BindFlags           = D3D11_BIND_STREAM_OUTPUT | D3D11_BIND_VERTEX_BUFFER;
+	desc.ByteWidth           = streamOutVertexSize * vertexCount;
+	desc.CPUAccessFlags      = 0;
+	desc.MiscFlags           = 0;
+	desc.StructureByteStride = 0;
+	desc.Usage               = D3D11_USAGE_DEFAULT;
+
+	// Attempt to create the buffer and return the result
+	HRESULT result = device->CreateBuffer(&desc, 0, buffer);
+	return (result == S_OK);
+}
+
+// Helper method to unbind all stream out buffers from the SO stage
+void SimpleGeometryShader::UnbindStreamOutStage(ID3D11DeviceContext* deviceContext)
+{
+	unsigned int offset = 0;
+	ID3D11Buffer* unset[1] = { 0 };
+	deviceContext->SOSetTargets(1, unset, &offset);
+}
+
+// Sets the vertex shader and constant buffers for
+// future DirectX drawing
+void SimpleGeometryShader::SetShaderAndCB()
+{
+	// Is shader valid?
+	if (!shaderValid) return;
+
+	// Set the shader
+	deviceContext->GSSetShader(shader, 0, 0);
+
+	// Set the constant buffers
+	for (unsigned int i = 0; i < constantBufferCount; i++)
+	{
+		deviceContext->GSSetConstantBuffers(
+			constantBuffers[i].BindIndex,
+			1,
+			&constantBuffers[i].ConstantBuffer);
+	}
+}
+
+// Sets a shader resource view in the Geometry shader stage
+//
+// name - The name of the texture resource in the shader
+// srv - The shader resource view of the texture in GPU memory
+//
+// Returns true if a texture of the given name was found, false otherwise
+bool SimpleGeometryShader::SetShaderResourceView(std::string name, ID3D11ShaderResourceView* srv)
+{
+	// Look for the variable and verify
+	unsigned int bindIndex = FindTextureBindIndex(name);
+	if (bindIndex == -1)
+		return false;
+
+	// Set the shader resource view
+	deviceContext->GSSetShaderResources(bindIndex, 1, &srv);
+
+	// Success
+	return true;
+}
+
+// Sets a sampler state in the Geometry shader stage
+//
+// name - The name of the sampler state in the shader
+// samplerState - The sampler state in GPU memory
+//
+// Returns true if a sampler of the given name was found, false otherwise
+bool SimpleGeometryShader::SetSamplerState(std::string name, ID3D11SamplerState* samplerState)
+{
+	// Look for the variable and verify
+	unsigned int bindIndex = FindSamplerBindIndex(name);
+	if (bindIndex == -1)
+		return false;
+
+	// Set the shader resource view
+	deviceContext->GSSetSamplers(bindIndex, 1, &samplerState);
+
+	// Success
+	return true;
+}
+
+// Calculates the number of components specified by a parameter description mask
+//
+// mask - The mask to check (only values 0 - 15 are considered)
+//
+// Returns an integer between 0 - 4 inclusive
+unsigned int SimpleGeometryShader::CalcComponentCount(unsigned int mask)
+{
+	unsigned int result = 0;
+	result += (unsigned int)((mask & 1) == 1);
+	result += (unsigned int)((mask & 2) == 2);
+	result += (unsigned int)((mask & 4) == 4);
+	result += (unsigned int)((mask & 8) == 8);
+	return result;
+}

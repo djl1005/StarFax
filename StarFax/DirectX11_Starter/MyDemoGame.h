@@ -103,6 +103,7 @@ private:
 	// Initialization for our "game" demo
 	void CreateGeometryBuffers();
 	void LoadShadersAndInputLayout();
+	void LoadParticleShaders();
 	void InitializeCameraMatrices();
 	void genrateTerrain(ID3D11Device * theDevice, float dist, int size);
 private:
@@ -114,8 +115,20 @@ private:
 	//unsigned int in[96];
 
 	SimplePixelShader * pixelShader;
-	SimplePixelShader * particlePixelShader;
 	SimpleVertexShader * vertexShader;
+
+	//Particles
+	ID3D11Buffer* soBufferRead;
+	ID3D11Buffer* soBufferWrite;
+	bool spawnFlip;
+	int frameCount;
+
+	SimpleVertexShader* particleVertexShader;
+	SimplePixelShader* particlePixelShader;
+	SimpleGeometryShader* particleGeometryShader;
+
+	SimpleVertexShader* spawnPVS;
+	SimpleGeometryShader* spawnPGS;
 
 	// The matrices to go from model space
 	// to screen space

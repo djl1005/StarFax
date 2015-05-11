@@ -83,6 +83,7 @@ protected:
 	// Pure virtual functions for dealing with shader types
 	virtual bool CreateShader(ID3DBlob* shaderBlob) = 0;
 	virtual void SetShaderAndCB() = 0;
+
 	virtual void CleanUp();
 
 	// Helpers for finding data by name
@@ -132,3 +133,35 @@ protected:
 };
 
 
+// Derived class for GEOMETRY shaders -----------------------------------------
+class SimpleGeometryShader : public ISimpleShader
+{
+public:
+	SimpleGeometryShader(ID3D11Device* device, ID3D11DeviceContext* context, bool useStreamOut = 0, bool allowStreamOutRasterization = 0);
+	~SimpleGeometryShader();
+	ID3D11GeometryShader* GetDirectXShader() { return shader; }
+
+	bool SetShaderResourceView(std::string name, ID3D11ShaderResourceView* srv);
+	bool SetSamplerState(std::string name, ID3D11SamplerState* samplerState);
+
+	bool CreateCompatibleStreamOutBuffer(ID3D11Buffer** buffer, int vertexCount);
+
+	static void UnbindStreamOutStage(ID3D11DeviceContext* deviceContext);
+
+protected:
+	// Shader itself
+	ID3D11GeometryShader* shader;
+
+	// Stream out related
+	bool useStreamOut;
+	bool allowStreamOutRasterization;
+	unsigned int streamOutVertexSize;
+
+	bool CreateShader(ID3DBlob* shaderBlob);
+	bool CreateShaderWithStreamOut(ID3DBlob* shaderBlob);
+	void SetShaderAndCB();
+	void CleanUp();
+
+	// Helpers
+	unsigned int CalcComponentCount(unsigned int mask);
+};

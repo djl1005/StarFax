@@ -109,8 +109,8 @@ bool MyDemoGame::Init()
 	e.setPosition(-3, 0, 10);
 	e.calcWorld();
 
-	snowEmitter = new Emitter(XMFLOAT3(-7, 2, 5), XMFLOAT3(3, -0.5, 0), XMFLOAT3(0, 0, 0), XMFLOAT4(1, 0, 0, 1), particleMesh, snowFlake, 1000, 0.03, true);
-	snowEmitter->setBlendState(device);
+	snowEmitter = new Emitter(XMFLOAT3(-7, 2, 5), XMFLOAT3(3, -0.5, 0), XMFLOAT3(0, 0, 0), XMFLOAT4(1, 0, 0, 1), 1000, 0.03);
+	//snowEmitter->setBlendState(device);
 
 	// Successfully initialized
 	return true;
@@ -145,11 +145,12 @@ void MyDemoGame::LoadShadersAndInputLayout()
 
 	pixelShader = new SimplePixelShader(device, deviceContext);
 	vertexShader = new SimpleVertexShader(device, deviceContext);
-	particlePixelShader = new SimplePixelShader(device, deviceContext);
+	
 
 	pixelShader->LoadShaderFile(L"PixelShader.cso");
-	particlePixelShader->LoadShaderFile(L"ParticlePixelShader.cso");
 	vertexShader->LoadShaderFile(L"VertexShader.cso");
+
+	LoadParticleShaders();
 
 	CreateWICTextureFromFile(device, deviceContext, L"Brick.jpg", 0, &srv);
 
@@ -237,10 +238,34 @@ void MyDemoGame::LoadShadersAndInputLayout()
 
 	device->CreateSamplerState(&sam, &sampler);
 
-	snowFlake = new Material(vertexShader, particlePixelShader, srv, sampler);
+	//snowFlake = new Material(vertexShader, particlePixelShader, srv, sampler);
 
 
 
+}
+
+void MyDemoGame::LoadParticleShaders()
+{
+	particleVertexShader = new SimpleVertexShader(device, deviceContext);
+	particleVertexShader->LoadShaderFile(L"ParticleVertexShader.cso");
+
+	particlePixelShader = new SimplePixelShader(device, deviceContext);
+	particlePixelShader->LoadShaderFile(L"ParticlePixelShader.cso");
+
+	particleGeometryShader = new SimpleGeometryShader(device, deviceContext);
+	particleGeometryShader->LoadShaderFile(L"ParticleGeometryShader.cso");
+
+	spawnPGS = new SimpleGeometryShader(device, deviceContext, true, false);
+	spawnPGS->LoadShaderFile(L"SpawnPGS.cso");
+
+	spawnPVS = new SimpleVertexShader(device, deviceContext);
+	spawnPVS->LoadShaderFile(L"SpawnPVS.cso");
+
+	// Create SO buffers
+	spawnPGS->CreateCompatibleStreamOutBuffer(&soBufferRead, 1000000);
+	spawnPGS->CreateCompatibleStreamOutBuffer(&soBufferWrite, 1000000);
+	spawnFlip = false;
+	frameCount = 0;
 }
 
 // Initializes the matrices necessary to represent our 3D camera
@@ -365,7 +390,7 @@ void MyDemoGame::DrawScene()
 			b.draw(deviceContext, cam, "diffuseTexture");
 		}
 
-		snowEmitter->drawParticles(deviceContext, cam);
+		//snowEmitter->drawParticles(deviceContext, cam);
 
 		terrain.draw(deviceContext, cam, "diffuseTexture");
 	}
