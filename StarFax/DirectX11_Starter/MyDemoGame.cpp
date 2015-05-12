@@ -193,9 +193,11 @@ void MyDemoGame::LoadShadersAndInputLayout()
 
 
 	//Player Material
-	CreateWICTextureFromFile(device, deviceContext, L"Ice.jpg", 0, &srv);			//Will be updated with correct texture when textures stop being broken
+	CreateWICTextureFromFile(device, deviceContext, L"enemyTexture.jpg", 0, &srv);			//Will be updated with correct texture when textures stop being broken
 
 	//D3D11_SAMPLER_DESC sam;
+
+	
 
 	ZeroMemory(&sam, sizeof(D3D11_SAMPLER_DESC));
 
@@ -275,11 +277,17 @@ void MyDemoGame::LoadParticleShaders()
 // Initializes the matrices necessary to represent our 3D camera
 void MyDemoGame::InitializeCameraMatrices()
 {
-	cam = new Camera(XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, -1), 0, 0);
-	lightCam = new Camera(XMFLOAT3(0, 50, -50),dlight1.Direction, 0, 0);
+	cam = new Camera(XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, 1), 0, 0);
+	lightCam = new Camera(XMFLOAT3(0, 10, -10), dlight1.Direction, 0, 0);
+
+	XMFLOAT4X4 proj;
+
+	XMStoreFloat4x4(&proj, XMMatrixTranspose(XMMatrixOrthographicLH(50, 50, .01f, 100)));
+
+	lightCam->setProjection(proj);
 
 	cam->updateProjection(AspectRatio());
-	lightCam->updateProjection(AspectRatio());
+	//lightCam->updateProjection(AspectRatio());
 }
 
 #pragma endregion
@@ -296,7 +304,7 @@ void MyDemoGame::OnResize()
 	if (cam != 0)
 	{
 		cam->updateProjection(AspectRatio());
-		lightCam->updateProjection(AspectRatio());
+		//lightCam->updateProjection(AspectRatio());
 	}
 
 
@@ -381,6 +389,7 @@ void MyDemoGame::DrawScene()
 
 	deviceContext->OMSetRenderTargets(0, nullptr, shadowMapStencilView);
 
+
 	//shadow draw
 	if (manager.getState() == 1)
 	{
@@ -401,15 +410,18 @@ void MyDemoGame::DrawScene()
 	//normal draw
 	if (manager.getState() == 1)
 	{
+		entity.getMaterial()->getPixShader()->SetShaderResourceView("depthTexture", shadowMap);
 		entity.draw(deviceContext, cam, lightCam, "diffuseTexture");
+		e.getMaterial()->getPixShader()->SetShaderResourceView("depthTexture", shadowMap);
 		e.draw(deviceContext, cam, lightCam, "diffuseTexture");
+
 
 		for each(Bullet b in bullets) {
 			b.draw(deviceContext, cam, lightCam, "diffuseTexture");
 		}
 
 		//snowEmitter->drawParticles(deviceContext, cam);
-
+		terrain.getMaterial()->getPixShader()->SetShaderResourceView("depthTexture", shadowMap);
 		terrain.draw(deviceContext, cam, lightCam, "diffuseTexture");
 	}
 
@@ -444,6 +456,7 @@ void MyDemoGame::OnMouseMove(WPARAM btnState, int x, int y)
 	if (cam != 0 && btnState & 0x001)
 	{
 		cam->mouse(x - prevMousePos.x, y - prevMousePos.y);
+		//lightCam->mouse(x - prevMousePos.x, y - prevMousePos.y);
 	}
 
 	prevMousePos.x = x;

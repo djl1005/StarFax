@@ -28,6 +28,11 @@ void Camera::offsetRotX(float offRad){ rotX += offRad; }
 void Camera::setRotY(float rad){ rotY = rad; }
 void Camera::offsetRotY(float offRad){ rotY += offRad; }
 
+void Camera::setProjection(XMFLOAT4X4 proj)
+{
+	projection = proj;
+}
+
 void Camera::updateProjection(float a)
 {
 
@@ -58,14 +63,16 @@ void Camera::update(float dt)
 {
 	XMVECTOR view = XMQuaternionRotationRollPitchYaw(rotX,rotY,0);
 
-	XMMATRIX rotx = XMMatrixRotationX(rotX);
-	XMMATRIX roty = XMMatrixRotationX(rotY);
+	XMVECTOR dir = XMLoadFloat3(&direction);
+
+	//XMMATRIX rotx = XMMatrixRotationX(rotX);
+	//XMMATRIX roty = XMMatrixRotationX(rotY);
 
 	XMVECTOR z = XMVectorSet(0, 0, 1, 0);
 	XMVECTOR up = XMVectorSet(0, 1, 0, 0);
 	XMVECTOR p = XMLoadFloat3(&position);
 
-	view = XMVector3Rotate(z, view);
+	view = XMVector3Rotate(dir, view);
 
 	/*
 	if (GetAsyncKeyState('W') & 0x8000){ p += (XMVector3Normalize(view) * speed *dt);}
@@ -76,8 +83,8 @@ void Camera::update(float dt)
 	if (GetAsyncKeyState('X') & 0x8000) { p += up * -speed*dt; }
 	*/
 
-	XMStoreFloat3(&position, p);
-	XMStoreFloat3(&direction, view);
+	//XMStoreFloat3(&position, p);
+	//XMStoreFloat3(&direction, view);
 
 
 	// Create the View matrix

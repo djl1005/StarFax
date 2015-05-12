@@ -77,6 +77,9 @@ public:
 
 	ID3D11ShaderResourceView * srv;
 
+	ID3D11ShaderResourceView * shadow; 
+
+
 	ID3D11SamplerState * sampler;
 
 	D3D11_SAMPLER_DESC sam;

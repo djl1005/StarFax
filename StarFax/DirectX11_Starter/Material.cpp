@@ -33,6 +33,7 @@ void Material::setShaders(char * texture)
 
 	pixShader->SetSamplerState("basicSampler", state);
 	pixShader->SetShaderResourceView(texture, srv);
+	//pixShader->SetShaderResourceView()
 	//pixShader->SetShaderResourceView("diffuseTexture", srv);
 
 	verShader->SetShader(true);

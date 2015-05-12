@@ -22,7 +22,7 @@ namespace
 
 // Set up a global callback for handling windows messages
 LRESULT CALLBACK
-	MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	// Forward the global callback to our game's message handling
 
@@ -35,7 +35,7 @@ LRESULT CALLBACK
 #pragma region Constructor / Destructor
 
 DirectXGame::DirectXGame(HINSTANCE hInstance)
-	:	hAppInst(hInstance),
+	: hAppInst(hInstance),
 	windowCaption(L"DirectX Game"),
 	driverType(D3D_DRIVER_TYPE_HARDWARE),
 	windowWidth(800),
@@ -52,6 +52,7 @@ DirectXGame::DirectXGame(HINSTANCE hInstance)
 	deviceContext(0),
 	swapChain(0),
 	depthStencilBuffer(0),
+	shadowMapBuffer(0),
 	renderTargetView(0),
 	shadowMapStencilView(0),
 	depthStencilView(0)
@@ -74,7 +75,7 @@ DirectXGame::~DirectXGame(void)
 	ReleaseMacro(depthStencilBuffer);
 
 	// Restore default device settings
-	if( deviceContext )
+	if (deviceContext)
 		deviceContext->ClearState();
 
 	// Release the context and finally the device
@@ -88,10 +89,10 @@ DirectXGame::~DirectXGame(void)
 // Handles the window and Direct3D initialization
 bool DirectXGame::Init()
 {
-	if(!InitMainWindow())
+	if (!InitMainWindow())
 		return false;
 
-	if(!InitDirect3D())
+	if (!InitDirect3D())
 		return false;
 
 	return true;
@@ -102,18 +103,18 @@ bool DirectXGame::InitMainWindow()
 {
 	// Actually create the window
 	WNDCLASS wc;
-	wc.style         = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc   = MainWndProc;  // Can't be a member function!  Hence our global version
-	wc.cbClsExtra    = 0;
-	wc.cbWndExtra    = 0;
-	wc.hInstance     = hAppInst;
-	wc.hIcon         = LoadIcon(0, IDI_APPLICATION);
-	wc.hCursor       = LoadCursor(0, IDC_ARROW);
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = MainWndProc;  // Can't be a member function!  Hence our global version
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = hAppInst;
+	wc.hIcon = LoadIcon(0, IDI_APPLICATION);
+	wc.hCursor = LoadCursor(0, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-	wc.lpszMenuName  = 0;
+	wc.lpszMenuName = 0;
 	wc.lpszClassName = L"D3DWndClassName";
 
-	if( !RegisterClass(&wc) )
+	if (!RegisterClass(&wc))
 	{
 		MessageBox(0, L"RegisterClass Failed.", 0, 0);
 		return false;
@@ -122,12 +123,12 @@ bool DirectXGame::InitMainWindow()
 	// Compute window rectangle dimensions based on requested client area dimensions.
 	RECT R = { 0, 0, windowWidth, windowHeight };
 	AdjustWindowRect(&R, WS_OVERLAPPEDWINDOW, false);
-	int width  = R.right - R.left;
+	int width = R.right - R.left;
 	int height = R.bottom - R.top;
 
-	hMainWnd = CreateWindow(L"D3DWndClassName", windowCaption.c_str(), 
-		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, hAppInst, 0); 
-	if( !hMainWnd )
+	hMainWnd = CreateWindow(L"D3DWndClassName", windowCaption.c_str(),
+		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, hAppInst, 0);
+	if (!hMainWnd)
 	{
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);
 		return false;
@@ -194,7 +195,7 @@ bool DirectXGame::InitDirect3D()
 		&deviceContext);
 
 	// Handle any device creation or DirectX version errors
-	if( FAILED(hr) )
+	if (FAILED(hr))
 	{
 		MessageBox(0, L"D3D11CreateDevice Failed", 0, 0);
 		return false;
@@ -205,7 +206,7 @@ bool DirectXGame::InitDirect3D()
 		DXGI_FORMAT_R8G8B8A8_UNORM,
 		4,
 		&msaa4xQuality));
-	assert( msaa4xQuality > 0 ); // Potential problem if quality is 0
+	assert(msaa4xQuality > 0); // Potential problem if quality is 0
 
 	// The remaining steps also need to happen each time the window
 	// is resized, so just run the OnResize method
@@ -237,9 +238,9 @@ void DirectXGame::OnResize()
 	// Resize the swap chain to match the window and
 	// recreate the render target view
 	HR(swapChain->ResizeBuffers(
-		1, 
-		windowWidth, 
-		windowHeight, 
+		1,
+		windowWidth,
+		windowHeight,
 		DXGI_FORMAT_R8G8B8A8_UNORM,
 		0));
 	ID3D11Texture2D* backBuffer;
@@ -250,26 +251,26 @@ void DirectXGame::OnResize()
 	// Set up the description of the texture to use for the
 	// depth stencil buffer
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
-	depthStencilDesc.Width			= windowWidth;
-	depthStencilDesc.Height			= windowHeight;
-	depthStencilDesc.MipLevels		= 1;
-	depthStencilDesc.ArraySize		= 1;
-	depthStencilDesc.Format			= DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilDesc.Usage          = D3D11_USAGE_DEFAULT;
-	depthStencilDesc.BindFlags      = D3D11_BIND_DEPTH_STENCIL;
-	depthStencilDesc.CPUAccessFlags = 0; 
-	depthStencilDesc.MiscFlags      = 0;
-	if( enable4xMsaa )
+	depthStencilDesc.Width = windowWidth;
+	depthStencilDesc.Height = windowHeight;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags = 0;
+	depthStencilDesc.MiscFlags = 0;
+	if (enable4xMsaa)
 	{
 		// Turn on 4x MultiSample Anti Aliasing
 		// This must match swap chain MSAA values
-		depthStencilDesc.SampleDesc.Count	= 4;
+		depthStencilDesc.SampleDesc.Count = 4;
 		depthStencilDesc.SampleDesc.Quality = msaa4xQuality - 1;
 	}
 	else
 	{
 		// No MSAA
-		depthStencilDesc.SampleDesc.Count   = 1;
+		depthStencilDesc.SampleDesc.Count = 1;
 		depthStencilDesc.SampleDesc.Quality = 0;
 	}
 
@@ -279,27 +280,31 @@ void DirectXGame::OnResize()
 	shadowMapDesc.Height = windowHeight;
 	shadowMapDesc.MipLevels = 1;
 	shadowMapDesc.ArraySize = 1;
-	shadowMapDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	shadowMapDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 	shadowMapDesc.Usage = D3D11_USAGE_DEFAULT;
-	shadowMapDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	shadowMapDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
 	shadowMapDesc.CPUAccessFlags = 0;
 	shadowMapDesc.MiscFlags = 0;
-	if (enable4xMsaa)
-	{
-		// Turn on 4x MultiSample Anti Aliasing
-		// This must match swap chain MSAA values
-		shadowMapDesc.SampleDesc.Count = 4;
-		shadowMapDesc.SampleDesc.Quality = msaa4xQuality - 1;
-	}
-	else
-	{
-		// No MSAA
-		shadowMapDesc.SampleDesc.Count = 1;
-		shadowMapDesc.SampleDesc.Quality = 0;
-	}
+	shadowMapDesc.SampleDesc.Count = 1;
+	shadowMapDesc.SampleDesc.Quality = 0;
 
-	HR(device->CreateTexture2D(&shadowMapDesc, 0, &depthStencilBuffer));
-	HR(device->CreateDepthStencilView(depthStencilBuffer, 0, &shadowMapStencilView));
+	D3D11_DEPTH_STENCIL_VIEW_DESC shadowMapView;
+	ZeroMemory(&shadowMapView, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+	shadowMapView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	shadowMapView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	shadowMapView.Texture2D.MipSlice = 0;
+
+	HR(device->CreateTexture2D(&shadowMapDesc, 0, &shadowMapBuffer));
+	HR(device->CreateDepthStencilView(shadowMapBuffer, &shadowMapView, &shadowMapStencilView));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC dsec;
+	ZeroMemory(&dsec, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+	dsec.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	dsec.Texture2D.MipLevels = 1;
+	dsec.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+
+	HR(device->CreateShaderResourceView(shadowMapBuffer, &dsec, &shadowMap));
+
 
 	// Create the depth/stencil buffer and corresponding view
 	HR(device->CreateTexture2D(&depthStencilDesc, 0, &depthStencilBuffer));
@@ -310,12 +315,12 @@ void DirectXGame::OnResize()
 	deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
 	// Update the viewport and set it on the device
-	viewport.TopLeftX	= 0;
-	viewport.TopLeftY	= 0;
-	viewport.Width		= (float)windowWidth;
-	viewport.Height		= (float)windowHeight;
-	viewport.MinDepth	= 0.0f;
-	viewport.MaxDepth	= 1.0f;
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.Width = (float)windowWidth;
+	viewport.Height = (float)windowHeight;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
 	deviceContext->RSSetViewports(1, &viewport);
 }
 #pragma endregion
@@ -326,25 +331,25 @@ void DirectXGame::OnResize()
 // and calls our Update & Draw methods
 int DirectXGame::Run()
 {
-	MSG msg = {0};
+	MSG msg = { 0 };
 	timer.Reset();
 
 	// Loop until we get a quit message from windows
-	while(msg.message != WM_QUIT)
+	while (msg.message != WM_QUIT)
 	{
 		// Peek at the next message (and remove it from the queue)
-		if(PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
 			// Handle this message
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 		else
 		{
 			// No message, so continue the game loop
 			timer.Tick();
 
-			if( gamePaused )
+			if (gamePaused)
 			{
 				Sleep(100);
 			}
@@ -372,21 +377,21 @@ void DirectXGame::CalculateFrameStats()
 	frameCnt++;
 
 	// Compute averages over one second period.
-	if( (timer.TotalTime() - timeElapsed) >= 1.0f )
+	if ((timer.TotalTime() - timeElapsed) >= 1.0f)
 	{
 		float fps = (float)frameCnt; // fps = frameCnt / 1
 		float mspf = 1000.0f / fps;
 
-		std::wostringstream outs;   
+		std::wostringstream outs;
 		outs.precision(6);
 		outs << windowCaption << L"    "
 			<< L"Width: " << windowWidth << L"    "
 			<< L"Height: " << windowHeight << L"    "
-			<< L"FPS: " << fps << L"    " 
+			<< L"FPS: " << fps << L"    "
 			<< L"Frame Time: " << mspf << L" (ms)";
 
 		// Include feature level
-		switch(featureLevel)
+		switch (featureLevel)
 		{
 		case D3D_FEATURE_LEVEL_11_1: outs << "    DX 11.1"; break;
 		case D3D_FEATURE_LEVEL_11_0: outs << "    DX 11.0"; break;
@@ -412,13 +417,13 @@ void DirectXGame::CalculateFrameStats()
 
 LRESULT DirectXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch( msg )
+	switch (msg)
 	{
 		// WM_ACTIVATE is sent when the window is activated or deactivated.  
 		// We pause the game when the window is deactivated and unpause it 
 		// when it becomes active.  
 	case WM_ACTIVATE:
-		if( LOWORD(wParam) == WA_INACTIVE )
+		if (LOWORD(wParam) == WA_INACTIVE)
 		{
 			gamePaused = true;
 			timer.Stop();
@@ -433,27 +438,27 @@ LRESULT DirectXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// WM_SIZE is sent when the user resizes the window.  
 	case WM_SIZE:
 		// Save the new client area dimensions.
-		windowWidth  = LOWORD(lParam);
+		windowWidth = LOWORD(lParam);
 		windowHeight = HIWORD(lParam);
-		if( device )
+		if (device)
 		{
-			if( wParam == SIZE_MINIMIZED )
+			if (wParam == SIZE_MINIMIZED)
 			{
 				gamePaused = true;
 				minimized = true;
 				maximized = false;
 			}
-			else if( wParam == SIZE_MAXIMIZED )
+			else if (wParam == SIZE_MAXIMIZED)
 			{
 				gamePaused = false;
 				minimized = false;
 				maximized = true;
 				OnResize();
 			}
-			else if( wParam == SIZE_RESTORED )
+			else if (wParam == SIZE_RESTORED)
 			{
 				// Restoring from minimized state?
-				if( minimized )
+				if (minimized)
 				{
 					gamePaused = false;
 					minimized = false;
@@ -461,13 +466,13 @@ LRESULT DirectXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				}
 
 				// Restoring from maximized state?
-				else if( maximized )
+				else if (maximized)
 				{
 					gamePaused = false;
 					maximized = false;
 					OnResize();
 				}
-				else if( resizing )
+				else if (resizing)
 				{
 					// If user is dragging the resize bars, we do not resize 
 					// the buffers here because as the user continuously 
@@ -489,7 +494,7 @@ LRESULT DirectXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
 	case WM_ENTERSIZEMOVE:
 		gamePaused = true;
-		resizing  = true;
+		resizing = true;
 		timer.Stop();
 		return 0;
 
@@ -497,7 +502,7 @@ LRESULT DirectXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// Here we reset everything based on the new window dimensions.
 	case WM_EXITSIZEMOVE:
 		gamePaused = false;
-		resizing  = false;
+		resizing = false;
 		timer.Start();
 		OnResize();
 		return 0;
@@ -516,7 +521,7 @@ LRESULT DirectXGame::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// Catch this message so to prevent the window from becoming too small.
 	case WM_GETMINMAXINFO:
 		((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
-		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200; 
+		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
 
 	case WM_LBUTTONDOWN:

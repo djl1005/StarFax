@@ -31,7 +31,7 @@ float4 calcLight(float3 normal, DirectionalLight light)
 
 	float3 tolight = normalize(-light.Direction);
 
-	//normal = normalize(normal);
+	normal = normalize(normal);
 
 	float NdotL = dot(normal, tolight);
 
@@ -59,13 +59,10 @@ float4 main(VertexToPixel input) : SV_TARGET
 		float lightDepthValue = input.lightViewPos.z / input.lightViewPos.w;
 		lightDepthValue = lightDepthValue - bias;
 
-		if (lightDepthValue < depthValue)
+		if ((lightDepthValue <= depthValue))
 		{
-			//float3 normalLightDir = normalize(light.Direction);
-			//float diffuseBrightness = saturate(dot(input.normal, normalLightDir));
-			//color += light.DiffuseColor * diffuseBrightness;
 			color = calcLight(input.normal, light);
-			//color.w = 1;
+			color.w = 1;
 		}
 	}
 	

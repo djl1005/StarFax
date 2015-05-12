@@ -23,6 +23,8 @@ public:
 	
 	void setDirection(XMFLOAT3);
 	void offsetDirection(XMFLOAT3);
+
+	void setProjection(XMFLOAT4X4);
 	
 	void setRotX(float);
 	void offsetRotX(float);
