@@ -94,7 +94,7 @@ bool MyDemoGame::Init()
 
 	dlight1.AmbientColor = XMFLOAT4(0.3, 0.3, 0.3, 1);
 	dlight1.DiffuseColor = XMFLOAT4(.8, .8, .8, 1);
-	dlight1.Direction = XMFLOAT3(0, -.707, .707);
+	dlight1.Direction = XMFLOAT3(0, -1, 1);
 
 	// Set up camera-related matrices
 	InitializeCameraMatrices();
@@ -278,11 +278,11 @@ void MyDemoGame::LoadParticleShaders()
 void MyDemoGame::InitializeCameraMatrices()
 {
 	cam = new Camera(XMFLOAT3(0, 0, -5), XMFLOAT3(0, 0, 1), 0, 0);
-	lightCam = new Camera(XMFLOAT3(0, 10, -10), dlight1.Direction, 0, 0);
+	lightCam = new Camera(XMFLOAT3(0, 25, -25), dlight1.Direction, 0, 0);
 
 	XMFLOAT4X4 proj;
 
-	XMStoreFloat4x4(&proj, XMMatrixTranspose(XMMatrixOrthographicLH(50, 50, .01f, 100)));
+	XMStoreFloat4x4(&proj, XMMatrixTranspose(XMMatrixOrthographicLH(125, 125, .01f, 150)));
 
 	lightCam->setProjection(proj);
 
@@ -396,6 +396,10 @@ void MyDemoGame::DrawScene()
 		
 		entity.draw(deviceContext, lightCam, lightCam, "depthTexture");
 		e.draw(deviceContext, lightCam, lightCam, "depthTexture");
+
+		for each(Bullet b in bullets) {
+			b.draw(deviceContext, lightCam, lightCam, "depthTexture");
+		}
 
 		terrain.draw(deviceContext, lightCam, lightCam, "depthTexture");
 		

@@ -46,7 +46,7 @@ float4 calcLight(float3 normal, DirectionalLight light)
 // Entry point for this pixel shader
 float4 main(VertexToPixel input) : SV_TARGET
 {
-	float bias = 0.001f;
+	float bias = 0.005f;
 	float4 color = light.AmbientColor;
 	float2 projectTexCoord;
 	projectTexCoord.x = input.lightViewPos.x / input.lightViewPos.w / 2.0f + 0.5f;
@@ -62,7 +62,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 		if ((lightDepthValue <= depthValue))
 		{
 			color = calcLight(input.normal, light);
-			color.w = 1;
+			//color.w = 1;
 		}
 	}
 	

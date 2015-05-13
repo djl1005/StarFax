@@ -48,7 +48,7 @@ VertexToPixel main( VertexShaderInput input )
 	matrix lightWorldViewProj = mul(mul(world, lightView), lightProjection);
 	//output.lightViewPos = mul(world, input.position);
 	//output.lightViewPos = mul(world, float4(input.position, 1.0f));
-	output.lightViewPos = mul(lightWorldViewProj, float4(input.position, 1.0f));
+	output.lightViewPos = mul(float4(input.position, 1.0f), lightWorldViewProj);
 
 	return output;
 }
