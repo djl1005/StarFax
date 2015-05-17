@@ -109,8 +109,8 @@ bool MyDemoGame::Init()
 	e.setPosition(-3, 0, 10);
 	e.calcWorld();
 
-	snowEmitter = new Emitter(XMFLOAT3(-7, 2, 5), XMFLOAT3(3, -0.5, 0), XMFLOAT3(0, 0, 0), XMFLOAT4(1, 0, 0, 1), 1000, 0.03);
-	//snowEmitter->setBlendState(device);
+	snowEmitter = new Emitter(XMFLOAT3(0, 0, 0), XMFLOAT3(3, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT4(1, 0, 0, 1), 1000, 0.03);
+	//snowEmitter->createBuffers(device, deviceContext);
 
 	// Successfully initialized
 	return true;
@@ -245,9 +245,6 @@ void MyDemoGame::LoadShadersAndInputLayout()
 	device->CreateSamplerState(&sam, &sampler);
 
 	//snowFlake = new Material(vertexShader, particlePixelShader, srv, sampler);
-
-
-
 }
 
 void MyDemoGame::LoadParticleShaders()
@@ -429,11 +426,16 @@ void MyDemoGame::DrawScene()
 		terrain.draw(deviceContext, cam, lightCam, "diffuseTexture");
 	}
 
+	snowEmitter->setShaders(particleVertexShader, particlePixelShader, particleGeometryShader, spawnPVS, spawnPGS);
+	snowEmitter->drawParticles(deviceContext, cam, frameCount, timer.DeltaTime(), timer.TotalTime(), soBufferRead, soBufferWrite);
+
 	// Present the buffer
 	//  - Puts the stuff on the screen
 	//  - Do this EXACTLY once per frame
 	//  - Always at the end of the frame
 	HR(swapChain->Present(0, 0));
+
+	deviceContext->GSSetShader(0, 0, 0);
 }
 
 #pragma endregion

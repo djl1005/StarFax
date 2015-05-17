@@ -1,6 +1,7 @@
 #pragma once   
 
-#include <DirectXMath.h>
+#include <DirectXMath.h>   
+#include "DirectXGame.h"
 #include "Mesh.h"
 #include "Material.h"
 #include "Camera.h"
@@ -32,15 +33,18 @@ public:
 	XMFLOAT3 getStartVel();
 	XMFLOAT4 getStartCol();
 	XMFLOAT3 getStartRot();
-
+							
+	void calcWorld();
 	void update(float dt);
 
-	void drawParticles(ID3D11DeviceContext* context, Camera* cam);
+	void drawParticles(ID3D11DeviceContext* context, Camera* cam, float frameCount, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite);
+	void drawSpawn(ID3D11DeviceContext* context, float frameCount, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite);
 
-	void setBlendState(ID3D11Device* device);
+	void setBlendState(ID3D11Device* device, ID3D11DeviceContext* context);
 	void setShaders(SimpleVertexShader* pvs, SimplePixelShader* pps, SimpleGeometryShader* pgs, 
 		SimpleVertexShader* spvs, SimpleGeometryShader* spgs);
 	void createBuffers(ID3D11Device* device, ID3D11DeviceContext* context);
+	void swapSOBuffers(ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite);
 
 private:
 	XMFLOAT3 startPos;
@@ -82,5 +86,7 @@ private:
 	//Buffers
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
+
+	XMFLOAT4X4 world;
 };
 
