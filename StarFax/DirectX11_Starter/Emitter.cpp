@@ -1,7 +1,7 @@
 #include "Emitter.h"
 
 
-Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col1, XMFLOAT4 col3, XMFLOAT4 col2, float numParticles, float eRate)
+Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col1, XMFLOAT4 col3, XMFLOAT4 col2, float numParticles, float eRate, ID3D11SamplerState * sam, ID3D11ShaderResourceView * _srv)
 {
 	//Set particle starting values
 	startPos = pos;
@@ -15,9 +15,9 @@ Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col1, XMFLOAT4 col3, XMFLO
 	midCol = col2;
 	endCol = col3;
 
-	startSize = 1;
-	midSize = 1;
-	endSize = 1;
+	startSize = 10;
+	midSize = 10;
+	endSize = 10;
 
 	particleLimit = numParticles;
 	emmissionRate = eRate;
@@ -26,6 +26,9 @@ Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col1, XMFLOAT4 col3, XMFLO
 	idleTime = 0;
 	lifeTime = 50.0f;
 	totalParticles = 0;
+
+	state = sam;
+	srv = _srv;
 
 
 
@@ -61,10 +64,11 @@ void Emitter::calcWorld()
 
 void Emitter::setBlendState(ID3D11Device* device, ID3D11DeviceContext* context)
 {
+	/*
 	// Blend state
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
-	blendDesc.AlphaToCoverageEnable = false;
+	blendDesc.AlphaToCoverageEnable = true;
 	blendDesc.IndependentBlendEnable = false;
 	blendDesc.RenderTarget[0].BlendEnable = true;
 	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
@@ -74,6 +78,23 @@ void Emitter::setBlendState(ID3D11Device* device, ID3D11DeviceContext* context)
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	*/ 
+	
+	
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+	blendDesc.AlphaToCoverageEnable = TRUE;
+	blendDesc.IndependentBlendEnable = FALSE;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	
+
 	device->CreateBlendState(&blendDesc, &blendState);
 
 	float factor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -83,7 +104,7 @@ void Emitter::setBlendState(ID3D11Device* device, ID3D11DeviceContext* context)
 }
 
 void Emitter::setShaders(SimpleVertexShader* pvs, SimplePixelShader* pps, SimpleGeometryShader* pgs,
-	SimpleVertexShader* spvs, SimpleGeometryShader* spgs)
+	SimpleVertexShader* spvs, SimpleGeometryShader* spgs, char * texture)
 {
 	particleVertexShader = pvs;
 	particlePixelShader = pps;
@@ -94,6 +115,7 @@ void Emitter::setShaders(SimpleVertexShader* pvs, SimplePixelShader* pps, Simple
 
 	spawnPGS->CreateCompatibleStreamOutBuffer(&soBufferRead, 1000000);
 	spawnPGS->CreateCompatibleStreamOutBuffer(&soBufferWrite, 1000000);
+
 }
 
 void Emitter::createBuffers(ID3D11Device* device, ID3D11DeviceContext* context)
@@ -224,6 +246,10 @@ void Emitter::drawSpawn(ID3D11DeviceContext* context, float dt, float tt)
 
 	spawnPVS->SetShader();
 	spawnPGS->SetShader();
+
+
+	particlePixelShader->SetSamplerState("basicSampler", state);
+	particlePixelShader->SetShaderResourceView("diffuseTexture", srv);
 	context->PSSetShader(0, 0, 0); // No pixel shader needed
 
 	// Unbind vertex buffers (incase)

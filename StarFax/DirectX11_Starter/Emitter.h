@@ -26,7 +26,7 @@ struct PVertex
 class Emitter
 {
 public:
-	Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col1, XMFLOAT4 col3, XMFLOAT4 col2, float numParticles, float eRate);
+	Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col1, XMFLOAT4 col3, XMFLOAT4 col2, float numParticles, float eRate, ID3D11SamplerState * sam, ID3D11ShaderResourceView * _srv);
 	~Emitter();
 
 	XMFLOAT3 getStartPos();
@@ -41,7 +41,7 @@ public:
 
 	void setBlendState(ID3D11Device* device, ID3D11DeviceContext* context);
 	void setShaders(SimpleVertexShader* pvs, SimplePixelShader* pps, SimpleGeometryShader* pgs, 
-		SimpleVertexShader* spvs, SimpleGeometryShader* spgs);
+		SimpleVertexShader* spvs, SimpleGeometryShader* spgs, char * texture);
 	void createBuffers(ID3D11Device* device, ID3D11DeviceContext* context);
 	void swapSOBuffers();
 
@@ -71,6 +71,9 @@ private:
 	float particleLimit;
 	float totalParticles;
 	float frameCount;
+
+	ID3D11SamplerState * state;
+	ID3D11ShaderResourceView * srv;
 
 	SimpleVertexShader* particleVertexShader;
 	SimplePixelShader* particlePixelShader;

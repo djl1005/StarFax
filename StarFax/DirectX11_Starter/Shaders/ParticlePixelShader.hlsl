@@ -8,6 +8,9 @@ struct VertexToPixel
 	float2 UV			: TEXCOORD;
 };
 
+Texture2D diffuseTexture : register(t0);
+
+SamplerState basicSampler : register(s0);
 // Entry point for this pixel shader
 float4 main(VertexToPixel input) : SV_TARGET
 {
@@ -15,5 +18,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 	// - Note that this color (like all values that pass through the rasterizer)
 	//   is interpolated for each pixel between the corresponding 
 	//   vertices of the triangle
-	return input.color;
+	float4 color = input.color;
+	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.UV);
+	return (color * surfaceColor);
 }

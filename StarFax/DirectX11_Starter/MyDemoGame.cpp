@@ -111,10 +111,6 @@ bool MyDemoGame::Init()
 	enemy.setPosition(-3, 0, 10);
 	enemy.calcWorld();
 
-	snowEmitter = new Emitter(XMFLOAT3(-15, 4, 5), XMFLOAT3(2, -0.5f, 0), XMFLOAT4(1, 1, 1, 1), XMFLOAT4(1, 1, 1, 1), XMFLOAT4(1, 1, 1, 1), 100, 0.003f);
-	snowEmitter->createBuffers(device, deviceContext);
-	snowEmitter->setShaders(particleVertexShader, particlePixelShader, particleGeometryShader, spawnPVS, spawnPGS);
-
 	// Successfully initialized
 	return true;
 }
@@ -247,7 +243,24 @@ void MyDemoGame::LoadShadersAndInputLayout()
 
 	device->CreateSamplerState(&sam, &sampler);
 
-	//snowFlake = new Material(vertexShader, particlePixelShader, srv, sampler);
+	//Snow Particles
+	CreateWICTextureFromFile(device, deviceContext, L"Particle.png", 0, &srv);
+
+	//D3D11_SAMPLER_DESC sam;
+
+	ZeroMemory(&sam, sizeof(D3D11_SAMPLER_DESC));
+
+	sam.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sam.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sam.MaxLOD = D3D11_FLOAT32_MAX;
+
+	device->CreateSamplerState(&sam, &sampler);
+
+	snowEmitter = new Emitter(XMFLOAT3(-15, 4, 5), XMFLOAT3(2, -0.5f, 0), XMFLOAT4(1, 1, 1, 1), XMFLOAT4(1, 1, 1, 1), XMFLOAT4(1, 1, 1, 1), 100, 0.003f, sampler, srv);
+	snowEmitter->createBuffers(device, deviceContext);
+	snowEmitter->setShaders(particleVertexShader, particlePixelShader, particleGeometryShader, spawnPVS, spawnPGS, "diffuseTexture");
 }
 
 void MyDemoGame::LoadParticleShaders()
