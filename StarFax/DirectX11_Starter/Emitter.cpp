@@ -15,9 +15,9 @@ Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col1, XMFLOAT4 col3, XMFLO
 	midCol = col2;
 	endCol = col3;
 
-	startSize = 10;
-	midSize = 10;
-	endSize = 10;
+	startSize = 2;
+	midSize = 2;
+	endSize = 2;
 
 	particleLimit = numParticles;
 	emmissionRate = eRate;

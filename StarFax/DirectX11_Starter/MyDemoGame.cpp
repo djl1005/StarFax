@@ -244,7 +244,7 @@ void MyDemoGame::LoadShadersAndInputLayout()
 	device->CreateSamplerState(&sam, &sampler);
 
 	//Snow Particles
-	CreateWICTextureFromFile(device, deviceContext, L"Particle.png", 0, &srv);
+	CreateWICTextureFromFile(device, deviceContext, L"snowFlake.png", 0, &srv);
 
 	//D3D11_SAMPLER_DESC sam;
 
