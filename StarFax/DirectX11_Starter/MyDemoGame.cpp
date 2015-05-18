@@ -102,16 +102,16 @@ bool MyDemoGame::Init()
 	InitializeCameraMatrices();
 
 	entity = Player(playerMesh, playerMat, cam);
-	e = Enemy(enemyMesh, enemyMat);
+	enemy = Enemy(enemyMesh, enemyMat);
 
 	terrain = GameEntity(feild, terrainMat);
 	terrain.setPosition(0, -3, 0);
 	terrain.calcWorld();
 
-	e.setPosition(-3, 0, 10);
-	e.calcWorld();
+	enemy.setPosition(-3, 0, 10);
+	enemy.calcWorld();
 
-	snowEmitter = new Emitter(XMFLOAT3(0, 0, 5), XMFLOAT3(1, 0, 0), XMFLOAT4(1, 0, 0, 0), 1000, 0.00001f);
+	snowEmitter = new Emitter(XMFLOAT3(-15, 4, 5), XMFLOAT3(2, -0.5f, 0), XMFLOAT4(1, 1, 1, 1), XMFLOAT4(1, 1, 1, 1), XMFLOAT4(1, 1, 1, 1), 100, 0.003f);
 	snowEmitter->createBuffers(device, deviceContext);
 	snowEmitter->setShaders(particleVertexShader, particlePixelShader, particleGeometryShader, spawnPVS, spawnPGS);
 
@@ -330,8 +330,8 @@ void MyDemoGame::UpdateScene(float dt)
 
 		entity.update(dt);
 
-		e.Move(dt);
-		e.update(dt);
+		enemy.Move(dt);
+		enemy.update(dt);
 
 		entity.Move(dt);
 
@@ -348,7 +348,7 @@ void MyDemoGame::UpdateScene(float dt)
 				bullets.erase(bullets.begin() + i);
 			}
 
-			else if (bullets[i].GetColider().Sat(&e.GetColider()))
+			else if (bullets[i].GetColider().Sat(&enemy.GetColider()))
 			{
 				bullets.erase(bullets.begin() + i);
 			}
@@ -401,7 +401,7 @@ void MyDemoGame::DrawScene()
 	{
 		
 		entity.draw(deviceContext, lightCam, lightCam, "depthTexture");
-		e.draw(deviceContext, lightCam, lightCam, "depthTexture");
+		enemy.draw(deviceContext, lightCam, lightCam, "depthTexture");
 
 		for each(Bullet b in bullets) {
 			b.draw(deviceContext, lightCam, lightCam, "depthTexture");
@@ -417,8 +417,8 @@ void MyDemoGame::DrawScene()
 	{
 		entity.getMaterial()->getPixShader()->SetShaderResourceView("depthTexture", shadowMap);
 		entity.draw(deviceContext, cam, lightCam, "diffuseTexture");
-		e.getMaterial()->getPixShader()->SetShaderResourceView("depthTexture", shadowMap);
-		e.draw(deviceContext, cam, lightCam, "diffuseTexture");
+		enemy.getMaterial()->getPixShader()->SetShaderResourceView("depthTexture", shadowMap);
+		enemy.draw(deviceContext, cam, lightCam, "diffuseTexture");
 
 
 		for each(Bullet b in bullets) {
@@ -433,9 +433,11 @@ void MyDemoGame::DrawScene()
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-
-	snowEmitter->setBlendState(device, deviceContext);
-	snowEmitter->drawParticles(deviceContext, cam, timer.DeltaTime(), timer.TotalTime());
+	//Only draw	snow in game
+	if (manager.getState() == 1){
+		snowEmitter->setBlendState(device, deviceContext);
+		snowEmitter->drawParticles(deviceContext, cam, timer.DeltaTime(), timer.TotalTime());
+	}
 
 
 	resetDepthBlendState();

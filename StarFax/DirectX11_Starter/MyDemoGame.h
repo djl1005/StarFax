@@ -94,7 +94,7 @@ public:
 
 	std::vector<Bullet> bullets;
 
-	Enemy e = Enemy(box, mat1);
+	Enemy enemy = Enemy(box, mat1);
 
 	GameEntity terrain = GameEntity(feild, mat1);
 

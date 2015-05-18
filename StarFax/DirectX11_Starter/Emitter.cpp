@@ -1,7 +1,7 @@
 #include "Emitter.h"
 
 
-Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col, float numParticles, float eRate)
+Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col1, XMFLOAT4 col3, XMFLOAT4 col2, float numParticles, float eRate)
 {
 	//Set particle starting values
 	startPos = pos;
@@ -11,13 +11,13 @@ Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col, float numParticles, f
 	//startCol = col;
 	//midCol = col;
 	//endCol = col;
-	startCol = XMFLOAT4(1, 0, 0, 1);
-	midCol = XMFLOAT4(1, 0, 0, 1);
-	endCol = XMFLOAT4(1, 0, 0, 1);
+	startCol = col1;
+	midCol = col2;
+	endCol = col3;
 
-	startSize = 5;
-	midSize = 10;
-	endSize = 3;
+	startSize = 1;
+	midSize = 1;
+	endSize = 1;
 
 	particleLimit = numParticles;
 	emmissionRate = eRate;

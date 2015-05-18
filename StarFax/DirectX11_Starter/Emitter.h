@@ -26,7 +26,7 @@ struct PVertex
 class Emitter
 {
 public:
-	Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col, float numParticles, float eRate);
+	Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col1, XMFLOAT4 col3, XMFLOAT4 col2, float numParticles, float eRate);
 	~Emitter();
 
 	XMFLOAT3 getStartPos();

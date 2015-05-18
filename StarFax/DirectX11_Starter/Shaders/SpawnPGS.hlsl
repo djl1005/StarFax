@@ -55,8 +55,8 @@ void main(point VStoGS input[1], inout PointStream<VStoGS> outStream)
 
 			// Alter some values from default
 			float4 random = randomTexture.SampleLevel(randomSampler, totalTime, 0);
-				emit.startPos += random.xyz * 1.0f;
-			//emit.startVel.x = random.w * 0.3f;
+			emit.startPos += random.xyz * 1.0f;
+			emit.startVel.y += random.w * -3.0f;
 			emit.startVel.z = random.x * 0.3f;
 
 			outStream.Append(emit);
