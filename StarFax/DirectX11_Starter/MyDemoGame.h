@@ -109,10 +109,13 @@ private:
 	void LoadParticleShaders();
 	void InitializeCameraMatrices();
 	void genrateTerrain(ID3D11Device * theDevice, float dist, int size);
+	void resetDepthBlendState();
 private:
 	// Buffers to hold actual geometry
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
+	ID3D11BlendState* blendState;
+	ID3D11DepthStencilState* depthState;
 
 	SimplePixelShader * pixelShader;
 	SimpleVertexShader * vertexShader;

@@ -26,13 +26,12 @@ struct PVertex
 class Emitter
 {
 public:
-	Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT4 col, float numParticles, float eRate);
+	Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col, float numParticles, float eRate);
 	~Emitter();
 
 	XMFLOAT3 getStartPos();
 	XMFLOAT3 getStartVel();
 	XMFLOAT4 getStartCol();
-	XMFLOAT3 getStartRot();
 							
 	void calcWorld();
 	void update(float dt);
@@ -55,8 +54,6 @@ private:
 	float startSize;
 	float midSize;
 	float endSize;
-	XMFLOAT3 startRot;
-	XMFLOAT3 endRot;
 
 	ID3D11BlendState* blendStateAlphaToCoverage;
 

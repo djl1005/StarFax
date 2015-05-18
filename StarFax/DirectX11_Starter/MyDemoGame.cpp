@@ -112,7 +112,7 @@ bool MyDemoGame::Init()
 	e.setPosition(-3, 0, 10);
 	e.calcWorld();
 
-	snowEmitter = new Emitter(XMFLOAT3(-3, 0, 6), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 180, 0), XMFLOAT4(1, 0, 0, 1), 1000, 0.00001f);
+	snowEmitter = new Emitter(XMFLOAT3(-3, 0, 9), XMFLOAT3(0, 0, 0), XMFLOAT4(1, 0, 0, 0), 1000, 0.00001f);
 	snowEmitter->createBuffers(device, deviceContext);
 
 	// Successfully initialized
@@ -159,7 +159,7 @@ void MyDemoGame::LoadShadersAndInputLayout()
 
 	LoadParticleShaders();
 
-	CreateWICTextureFromFile(device, deviceContext, L"Brick.jpg", 0, &srv);
+	CreateWICTextureFromFile(device, deviceContext, L"PowerPellet.png", 0, &srv);
 
 	//D3D11_SAMPLER_DESC sam;
 
@@ -274,6 +274,29 @@ void MyDemoGame::LoadParticleShaders()
 	frameCount = 0;
 }
 
+void MyDemoGame::resetDepthBlendState()
+{
+
+	// Blend state
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+	blendDesc.AlphaToCoverageEnable = false;
+	blendDesc.IndependentBlendEnable = false;
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	device->CreateBlendState(&blendDesc, &blendState);
+
+	float factor[4] = {  0.0f, 0.0f, 0.0f, 0.0f };
+	deviceContext->OMSetBlendState(blendState, factor, 0xffffffff);
+
+	// Depth state
+	D3D11_DEPTH_STENCIL_DESC depthDesc;
+	ZeroMemory(&depthDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	depthDesc.DepthEnable = true;
+	device->CreateDepthStencilState(&depthDesc, &depthState);
+	deviceContext->OMSetDepthStencilState(depthState, 0);
+}
+
 // Initializes the matrices necessary to represent our 3D camera
 void MyDemoGame::InitializeCameraMatrices()
 {
@@ -336,6 +359,7 @@ void MyDemoGame::UpdateScene(float dt)
 
 		if (entity.Fire()) {
 			Bullet temp = Bullet(sphere, mat1);
+			temp.setScale(0.5f, 0.5f, 0.5f);
 			temp.setPosition(entity.getPosition().x, entity.getPosition().y, entity.getPosition().z);
 			bullets.push_back(temp);
 		}
@@ -430,9 +454,6 @@ void MyDemoGame::DrawScene()
 		snowEmitter->setShaders(particleVertexShader, particlePixelShader, particleGeometryShader, spawnPVS, spawnPGS);
 		snowEmitter->setBlendState(device, deviceContext);
 		snowEmitter->drawParticles(deviceContext, cam, timer.DeltaTime(), timer.TotalTime(), soBufferRead, soBufferWrite);
-
-		OutputDebugStringA("Blargle");
-
 	}
 
 
@@ -444,6 +465,7 @@ void MyDemoGame::DrawScene()
 
 	//Ignore the geometry shader until we draw particles again
 	deviceContext->GSSetShader(0, 0, 0);
+	resetDepthBlendState();
 
 }
 
@@ -457,6 +479,7 @@ void MyDemoGame::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	prevMousePos.x = x;
 	prevMousePos.y = y;
+	cam->setPostion(XMFLOAT3(cam->getPosition().x, cam->getPosition().y, cam->getPosition().z));
 
 	SetCapture(hMainWnd);
 }

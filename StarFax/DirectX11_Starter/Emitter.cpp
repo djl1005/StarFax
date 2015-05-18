@@ -1,16 +1,18 @@
 #include "Emitter.h"
 
 
-Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT4 col, float numParticles, float eRate)
+Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col, float numParticles, float eRate)
 {
 	//Set particle starting values
 	startPos = pos;
 	startVel = vel;
-	startCol = col;
-	midCol = col;
-	endCol = col;
-	startRot = rot;
-	endRot = rot;
+
+	//startCol = col;
+	//midCol = col;
+	//endCol = col;
+	startCol = XMFLOAT4(1, 0, 0, 0);
+	midCol = XMFLOAT4(1, 0, 0, 0.1f);
+	endCol = XMFLOAT4(1, 0, 0, 0);
 
 	startSize = 5;
 	midSize = 10;
@@ -65,7 +67,7 @@ void Emitter::setBlendState(ID3D11Device* device, ID3D11DeviceContext* context)
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	//device->CreateBlendState(&blendDesc, &blendState);
+	device->CreateBlendState(&blendDesc, &blendState);
 
 	float factor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	context->OMSetBlendState(blendState, factor, 0xffffffff);
@@ -173,6 +175,13 @@ void Emitter::createBuffers(ID3D11Device* device, ID3D11DeviceContext* context)
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	device->CreateSamplerState(&samplerDesc, &randomSampler);
+
+	// Depth state
+	D3D11_DEPTH_STENCIL_DESC depthDesc;
+	ZeroMemory(&depthDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	depthDesc.DepthEnable = false;
+	device->CreateDepthStencilState(&depthDesc, &depthState);
+	context->OMSetDepthStencilState(depthState, 0);
 }
 
 void Emitter::swapSOBuffers(ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite)
@@ -197,18 +206,13 @@ XMFLOAT4 Emitter::getStartCol()
 	return startCol;
 }
 
-XMFLOAT3 Emitter::getStartRot()
-{
-	return startRot;
-}
-
 void Emitter::update(float dt)
 {
 }
 
 void Emitter::drawSpawn(ID3D11DeviceContext* context, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite)
 {
-	UINT stride = sizeof(Vertex);
+	UINT stride = sizeof(PVertex);
 	UINT offset = 0;
 
 	// Set/unset correct shaders
@@ -238,7 +242,7 @@ void Emitter::drawSpawn(ID3D11DeviceContext* context, float dt, float tt, ID3D11
 		frameCount++;
 	}
 	else
-	{
+	{											  
 		// Draw using the buffers
 		context->IASetVertexBuffers(0, 1, &soBufferRead, &stride, &offset);
 		context->SOSetTargets(1, &soBufferWrite, &offset);
@@ -264,7 +268,7 @@ void Emitter::drawParticles(ID3D11DeviceContext* context, Camera* cam, float dt,
 	particleGeometryShader->SetMatrix4x4("view", cam->getViewMat());
 	particleGeometryShader->SetMatrix4x4("projection", cam->getProjection());
 
-	particleVertexShader->SetFloat3("acceleration", startVel);
+	particleVertexShader->SetFloat3("acceleration", XMFLOAT3(0, 0, 0));
 	particleVertexShader->SetFloat("maxLifetime", lifeTime);
 
 	particleVertexShader->SetShader(true);
@@ -272,7 +276,7 @@ void Emitter::drawParticles(ID3D11DeviceContext* context, Camera* cam, float dt,
 	particleGeometryShader->SetShader(true);
 
 	// Set buffers
-	UINT stride = sizeof(Vertex);
+	UINT stride = sizeof(PVertex);
 	UINT offset = 0;
 	context->IASetVertexBuffers(0, 1, &soBufferRead, &stride, &offset);
 
