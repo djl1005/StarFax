@@ -7,12 +7,13 @@ Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col, float numParticles, f
 	startPos = pos;
 	startVel = vel;
 
+
 	//startCol = col;
 	//midCol = col;
 	//endCol = col;
-	startCol = XMFLOAT4(1, 0, 0, 0);
-	midCol = XMFLOAT4(1, 0, 0, 0.1f);
-	endCol = XMFLOAT4(1, 0, 0, 0);
+	startCol = XMFLOAT4(1, 0, 0, 1);
+	midCol = XMFLOAT4(1, 0, 0, 1);
+	endCol = XMFLOAT4(1, 0, 0, 1);
 
 	startSize = 5;
 	midSize = 10;
@@ -22,11 +23,14 @@ Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT4 col, float numParticles, f
 	emmissionRate = eRate;
 	frameCount = 0;
 
-	idleTime = 5;
-	lifeTime = 5.0f;
+	idleTime = 0;
+	lifeTime = 50.0f;
 	totalParticles = 0;
 
+
+
 	XMMATRIX W = XMMatrixIdentity();
+
 	XMStoreFloat4x4(&world, XMMatrixTranspose(W));
 }
 
@@ -41,6 +45,9 @@ Emitter::~Emitter()
 	delete particleVertexShader;
 	delete spawnPGS;
 	delete spawnPVS;
+
+	soBufferRead->Release();
+	soBufferWrite->Release();
 
 	randomSampler->Release();
 	randomSRV->Release();
@@ -71,6 +78,8 @@ void Emitter::setBlendState(ID3D11Device* device, ID3D11DeviceContext* context)
 
 	float factor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	context->OMSetBlendState(blendState, factor, 0xffffffff);
+
+	context->OMSetDepthStencilState(depthState, 0);
 }
 
 void Emitter::setShaders(SimpleVertexShader* pvs, SimplePixelShader* pps, SimpleGeometryShader* pgs,
@@ -82,6 +91,9 @@ void Emitter::setShaders(SimpleVertexShader* pvs, SimplePixelShader* pps, Simple
 
 	spawnPVS = spvs;
 	spawnPGS = spgs;
+
+	spawnPGS->CreateCompatibleStreamOutBuffer(&soBufferRead, 1000000);
+	spawnPGS->CreateCompatibleStreamOutBuffer(&soBufferWrite, 1000000);
 }
 
 void Emitter::createBuffers(ID3D11Device* device, ID3D11DeviceContext* context)
@@ -117,20 +129,6 @@ void Emitter::createBuffers(ID3D11Device* device, ID3D11DeviceContext* context)
 	initialVertexData.pSysMem = vertices;
 	HR(device->CreateBuffer(&vbd, &initialVertexData, &vertexBuffer));
 
-	// Set up the indices of the vertices (necessary for indexed drawing)
-	UINT indices[] = { 0 };
-
-	// Create the index buffer
-	D3D11_BUFFER_DESC ibd;
-	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(UINT) * 1; // Number of indices in the "model" you want to draw
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = 0;
-	ibd.MiscFlags = 0;
-	ibd.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA initialIndexData;
-	initialIndexData.pSysMem = indices;
-	HR(device->CreateBuffer(&ibd, &initialIndexData, &indexBuffer));
 
 
 	// Set up "random" stuff -------------------------------------
@@ -184,7 +182,7 @@ void Emitter::createBuffers(ID3D11Device* device, ID3D11DeviceContext* context)
 	context->OMSetDepthStencilState(depthState, 0);
 }
 
-void Emitter::swapSOBuffers(ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite)
+void Emitter::swapSOBuffers()
 {
 	ID3D11Buffer* temp = soBufferRead;
 	soBufferRead = soBufferWrite;
@@ -210,7 +208,7 @@ void Emitter::update(float dt)
 {
 }
 
-void Emitter::drawSpawn(ID3D11DeviceContext* context, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite)
+void Emitter::drawSpawn(ID3D11DeviceContext* context, float dt, float tt)
 {
 	UINT stride = sizeof(PVertex);
 	UINT offset = 0;
@@ -252,13 +250,16 @@ void Emitter::drawSpawn(ID3D11DeviceContext* context, float dt, float tt, ID3D11
 	// Unbind SO targets
 	SimpleGeometryShader::UnbindStreamOutStage(context);
 
+	
+
 }
 
-void Emitter::drawParticles(ID3D11DeviceContext* context, Camera* cam, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite)
+void Emitter::drawParticles(ID3D11DeviceContext* context, Camera* cam, float dt, float tt)
 {
-	drawSpawn(context, dt, tt, soBufferRead, soBufferWrite);
 
-	swapSOBuffers(soBufferRead, soBufferWrite);
+	drawSpawn(context, dt, tt);
+
+	swapSOBuffers();
 
 	// Set the current vertex and pixel shaders
 	//  - These don't need to be set every frame YET

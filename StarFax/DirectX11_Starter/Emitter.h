@@ -36,14 +36,14 @@ public:
 	void calcWorld();
 	void update(float dt);
 
-	void drawParticles(ID3D11DeviceContext* context, Camera* cam, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite);
-	void drawSpawn(ID3D11DeviceContext* context, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite);
+	void drawParticles(ID3D11DeviceContext* context, Camera* cam, float dt, float tt);
+	void drawSpawn(ID3D11DeviceContext* context, float dt, float tt);
 
 	void setBlendState(ID3D11Device* device, ID3D11DeviceContext* context);
 	void setShaders(SimpleVertexShader* pvs, SimplePixelShader* pps, SimpleGeometryShader* pgs, 
 		SimpleVertexShader* spvs, SimpleGeometryShader* spgs);
 	void createBuffers(ID3D11Device* device, ID3D11DeviceContext* context);
-	void swapSOBuffers(ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite);
+	void swapSOBuffers();
 
 private:
 	XMFLOAT3 startPos;
@@ -56,6 +56,11 @@ private:
 	float endSize;
 
 	ID3D11BlendState* blendStateAlphaToCoverage;
+
+	ID3D11Buffer* soBufferRead;
+	ID3D11Buffer* soBufferWrite;
+
+
 
 
 	float lifeTime;
