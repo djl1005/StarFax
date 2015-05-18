@@ -7,13 +7,21 @@ Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT4 col, float n
 	startPos = pos;
 	startVel = vel;
 	startCol = col;
+	midCol = col;
+	endCol = col;
 	startRot = rot;
+	endRot = rot;
+
+	startSize = 5;
+	midSize = 10;
+	endSize = 3;
 
 	particleLimit = numParticles;
 	emmissionRate = eRate;
+	frameCount = 0;
 
 	idleTime = 5;
-	lifeTime = 5;
+	lifeTime = 5.0f;
 	totalParticles = 0;
 
 	XMMATRIX W = XMMatrixIdentity();
@@ -23,6 +31,18 @@ Emitter::Emitter(XMFLOAT3 pos, XMFLOAT3 vel, XMFLOAT3 rot, XMFLOAT4 col, float n
 
 Emitter::~Emitter()
 {
+	ReleaseMacro(vertexBuffer);
+	ReleaseMacro(indexBuffer);
+
+	delete particleGeometryShader;
+	delete particlePixelShader;
+	delete particleVertexShader;
+	delete spawnPGS;
+	delete spawnPVS;
+
+	randomSampler->Release();
+	randomSRV->Release();
+	randomTexture->Release();
 }
 
 void Emitter::calcWorld()
@@ -32,6 +52,23 @@ void Emitter::calcWorld()
 
 void Emitter::setBlendState(ID3D11Device* device, ID3D11DeviceContext* context)
 {
+	// Blend state
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+	blendDesc.AlphaToCoverageEnable = false;
+	blendDesc.IndependentBlendEnable = false;
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	//device->CreateBlendState(&blendDesc, &blendState);
+
+	float factor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	context->OMSetBlendState(blendState, factor, 0xffffffff);
 }
 
 void Emitter::setShaders(SimpleVertexShader* pvs, SimplePixelShader* pps, SimpleGeometryShader* pgs,
@@ -127,23 +164,6 @@ void Emitter::createBuffers(ID3D11Device* device, ID3D11DeviceContext* context)
 	srvDesc.Texture1D.MostDetailedMip = 0;
 	device->CreateShaderResourceView(randomTexture, &srvDesc, &randomSRV);
 
-	// Blend state
-	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
-	blendDesc.AlphaToCoverageEnable = false;
-	blendDesc.IndependentBlendEnable = false;
-	blendDesc.RenderTarget[0].BlendEnable = true;
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	device->CreateBlendState(&blendDesc, &blendState);
-
-	float factor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	context->OMSetBlendState(blendState, factor, 0xffffffff);
 
 	// Sampler
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -153,13 +173,6 @@ void Emitter::createBuffers(ID3D11Device* device, ID3D11DeviceContext* context)
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	device->CreateSamplerState(&samplerDesc, &randomSampler);
-
-	//// Depth state
-	D3D11_DEPTH_STENCIL_DESC depthDesc;
-	ZeroMemory(&depthDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-	depthDesc.DepthEnable = false;
-	device->CreateDepthStencilState(&depthDesc, &depthState);
-	context->OMSetDepthStencilState(depthState, 0);
 }
 
 void Emitter::swapSOBuffers(ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite)
@@ -193,7 +206,7 @@ void Emitter::update(float dt)
 {
 }
 
-void Emitter::drawSpawn(ID3D11DeviceContext* context, float frameCount, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite)
+void Emitter::drawSpawn(ID3D11DeviceContext* context, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite)
 {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
@@ -237,9 +250,9 @@ void Emitter::drawSpawn(ID3D11DeviceContext* context, float frameCount, float dt
 
 }
 
-void Emitter::drawParticles(ID3D11DeviceContext* context, Camera* cam, float frameCount, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite)
+void Emitter::drawParticles(ID3D11DeviceContext* context, Camera* cam, float dt, float tt, ID3D11Buffer* soBufferRead, ID3D11Buffer* soBufferWrite)
 {
-	drawSpawn(context, frameCount, dt, tt, soBufferRead, soBufferWrite);
+	drawSpawn(context, dt, tt, soBufferRead, soBufferWrite);
 
 	swapSOBuffers(soBufferRead, soBufferWrite);
 

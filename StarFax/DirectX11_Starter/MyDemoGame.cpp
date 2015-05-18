@@ -67,6 +67,9 @@ MyDemoGame::~MyDemoGame()
 	ReleaseMacro(vertexBuffer);
 	ReleaseMacro(indexBuffer);
 
+	soBufferRead->Release();
+	soBufferWrite->Release();
+
 
 	delete(box);
 	delete(sphere);
@@ -109,8 +112,8 @@ bool MyDemoGame::Init()
 	e.setPosition(-3, 0, 10);
 	e.calcWorld();
 
-	snowEmitter = new Emitter(XMFLOAT3(0, 0, 0), XMFLOAT3(3, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT4(1, 0, 0, 1), 1000, 0.03);
-	//snowEmitter->createBuffers(device, deviceContext);
+	snowEmitter = new Emitter(XMFLOAT3(-3, 0, 6), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 180, 0), XMFLOAT4(1, 0, 0, 1), 1000, 0.00001f);
+	snowEmitter->createBuffers(device, deviceContext);
 
 	// Successfully initialized
 	return true;
@@ -421,13 +424,17 @@ void MyDemoGame::DrawScene()
 			b.draw(deviceContext, cam, lightCam, "diffuseTexture");
 		}
 
-		//snowEmitter->drawParticles(deviceContext, cam);
 		terrain.getMaterial()->getPixShader()->SetShaderResourceView("depthTexture", shadowMap);
 		terrain.draw(deviceContext, cam, lightCam, "diffuseTexture");
+
+		snowEmitter->setShaders(particleVertexShader, particlePixelShader, particleGeometryShader, spawnPVS, spawnPGS);
+		snowEmitter->setBlendState(device, deviceContext);
+		snowEmitter->drawParticles(deviceContext, cam, timer.DeltaTime(), timer.TotalTime(), soBufferRead, soBufferWrite);
+
+		OutputDebugStringA("Blargle");
+
 	}
 
-	snowEmitter->setShaders(particleVertexShader, particlePixelShader, particleGeometryShader, spawnPVS, spawnPGS);
-	snowEmitter->drawParticles(deviceContext, cam, frameCount, timer.DeltaTime(), timer.TotalTime(), soBufferRead, soBufferWrite);
 
 	// Present the buffer
 	//  - Puts the stuff on the screen
@@ -435,7 +442,9 @@ void MyDemoGame::DrawScene()
 	//  - Always at the end of the frame
 	HR(swapChain->Present(0, 0));
 
+	//Ignore the geometry shader until we draw particles again
 	deviceContext->GSSetShader(0, 0, 0);
+
 }
 
 #pragma endregion
