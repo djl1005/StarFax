@@ -104,6 +104,8 @@ bool MyDemoGame::Init()
 	entity = Player(playerMesh, playerMat, cam);
 	enemy = Enemy(enemyMesh, enemyMat);
 
+	titleScreen = GameEntity(titleMesh, titleMat);
+
 	terrain = GameEntity(feild, terrainMat);
 	terrain.setPosition(0, -3, 0);
 	terrain.calcWorld();
@@ -124,7 +126,7 @@ void MyDemoGame::CreateGeometryBuffers()
 	playerMesh = new Mesh("Player.obj", device);
 	genrateTerrain(device, 1, 512);
 
-	particleMesh = new Mesh("Particle.obj", device);
+	titleMesh = new Mesh("TitleScreen.obj", device);
 }
 
 // Loads shaders from compiled shader object (.cso) files, and uses the
@@ -228,8 +230,8 @@ void MyDemoGame::LoadShadersAndInputLayout()
 
 	terrainMat = new Material(vertexShader, pixelShader, srv, sampler);
 
-	//Snowflake Material	  
-	CreateWICTextureFromFile(device, deviceContext, L"SnowFlake.png", 0, &srv);
+	//Title Material	  
+	CreateWICTextureFromFile(device, deviceContext, L"TitleScreen.png", 0, &srv);
 
 	//D3D11_SAMPLER_DESC sam;
 
@@ -242,6 +244,8 @@ void MyDemoGame::LoadShadersAndInputLayout()
 	sam.MaxLOD = D3D11_FLOAT32_MAX;
 
 	device->CreateSamplerState(&sam, &sampler);
+
+	titleMat = new Material(vertexShader, pixelShader, srv, sampler);
 
 	//Snow Particles
 	CreateWICTextureFromFile(device, deviceContext, L"snowFlake.png", 0, &srv);
@@ -338,6 +342,11 @@ void MyDemoGame::UpdateScene(float dt)
 	cam->update(dt);
 	lightCam->update(dt);
 
+	if (manager.getState() == 0)
+	{
+		titleScreen.update(dt);
+	}
+
 	if (manager.getState() == 1)
 	{
 
@@ -409,11 +418,11 @@ void MyDemoGame::DrawScene()
 	deviceContext->OMSetRenderTargets(0, nullptr, shadowMapStencilView);
 
 
+	
 
 	//shadow draw
 	if (manager.getState() == 1)
 	{
-		
 		entity.draw(deviceContext, lightCam, lightCam, "depthTexture");
 		enemy.draw(deviceContext, lightCam, lightCam, "depthTexture");
 
@@ -421,10 +430,16 @@ void MyDemoGame::DrawScene()
 			b.draw(deviceContext, lightCam, lightCam, "depthTexture");
 		}
 
-		//terrain.draw(deviceContext, lightCam, lightCam, "depthTexture");
+		//terrain.draw(deviceContext, lightCam, lightCam, "depthTexture");	
 	}
 	
 	deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+
+	//Title Screen
+	if (manager.getState() == 0)
+	{
+		titleScreen.draw(deviceContext, cam, lightCam, "diffuseTexture");
+	}
 
 	//normal draw
 	if (manager.getState() == 1)

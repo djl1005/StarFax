@@ -66,12 +66,13 @@ public:
 	Mesh * playerMesh;
 	Mesh * enemyMesh;
 	Mesh * mesh3;
-	Mesh * particleMesh;
+	Mesh * titleMesh;
 	Material* mat1;
 	Material* enemyMat;
 	Material* playerMat;
 	Material* terrainMat;
 	Material* snowFlake;
+	Material* titleMat;
 
 	Mesh * feild; 
 
@@ -97,6 +98,7 @@ public:
 	Enemy enemy = Enemy(box, mat1);
 
 	GameEntity terrain = GameEntity(feild, mat1);
+	GameEntity titleScreen = GameEntity(titleMesh, mat1);
 
 	Player entity = Player(box, mat1, cam);
 
