@@ -421,7 +421,7 @@ void MyDemoGame::DrawScene()
 			b.draw(deviceContext, lightCam, lightCam, "depthTexture");
 		}
 
-		terrain.draw(deviceContext, lightCam, lightCam, "depthTexture");
+		//terrain.draw(deviceContext, lightCam, lightCam, "depthTexture");
 	}
 	
 	deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
