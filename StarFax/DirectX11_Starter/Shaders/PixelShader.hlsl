@@ -31,7 +31,7 @@ float4 calcLight(float3 normal, DirectionalLight light)
 
 	float3 tolight = normalize(-light.Direction);
 
-	normal = normalize(normal);
+		normal = normalize(normal);
 
 	float NdotL = dot(normal, tolight);
 
@@ -48,11 +48,12 @@ float4 main(VertexToPixel input) : SV_TARGET
 {
 	float bias = 0.005f;
 	float4 color = light.AmbientColor;
+	float4 lightColor = calcLight(input.normal, light);
 	float2 projectTexCoord;
 	projectTexCoord.x = input.lightViewPos.x / input.lightViewPos.w / 2.0f + 0.5f;
 	projectTexCoord.y = -input.lightViewPos.y / input.lightViewPos.w / 2.0f + 0.5f;
-	
-	if (saturate(projectTexCoord.x) == projectTexCoord.x 
+
+	if (saturate(projectTexCoord.x) == projectTexCoord.x
 		&& saturate(projectTexCoord.y) == projectTexCoord.y)
 	{
 		float depthValue = depthTexture.Sample(basicSampler, projectTexCoord).r;
@@ -61,19 +62,23 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 		if ((lightDepthValue <= depthValue))
 		{
-			color = calcLight(input.normal, light);
+			color = lightColor;
 			//color.w = 1;
 		}
 	}
-	
+	else
+	{
+		color = lightColor;
+	}
+
 
 	float4 surfaceColor = diffuseTexture.Sample(basicSampler, input.UV);
 
-	//without shadows
-	//return surfaceColor * calcLight(input.normal, light);
+		//without shadows
+		//return surfaceColor * calcLight(input.normal, light);
 
-	//with shadows
-	return surfaceColor * color;
+		//with shadows
+		return surfaceColor * color;
 	//return color;
 }
 

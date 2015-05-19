@@ -299,7 +299,7 @@ void MyDemoGame::InitializeCameraMatrices()
 
 	XMFLOAT4X4 proj;
 
-	XMStoreFloat4x4(&proj, XMMatrixTranspose(XMMatrixOrthographicLH(125, 125, .01f, 150)));
+	XMStoreFloat4x4(&proj, XMMatrixTranspose(XMMatrixOrthographicLH(50, 50, 10, 80)));
 
 	lightCam->setProjection(proj);
 
@@ -363,6 +363,7 @@ void MyDemoGame::UpdateScene(float dt)
 
 			else if (bullets[i].GetColider().Sat(&enemy.GetColider()))
 			{
+				enemy.hit();
 				bullets.erase(bullets.begin() + i);
 			}
 		}

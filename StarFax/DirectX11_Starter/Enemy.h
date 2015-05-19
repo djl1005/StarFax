@@ -8,8 +8,10 @@ public:
 	~Enemy();
 
 	void Move(float);
-
+	void hit();
 private:
+
+	float invinciblityTimer;
 	float speed;
 	float time;
 	float health;
