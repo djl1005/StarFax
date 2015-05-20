@@ -1,5 +1,71 @@
-﻿Build started 5/19/2015 2:59:00 PM.
+﻿Build started 5/19/2015 7:11:11 PM.
+     1>Project "C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\DirectX11_Starter\DirectX11_Starter.vcxproj" on node 2 (Build target(s)).
+     1>FxCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T gs_5_0 /Fo "C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\ParticleGeometryShader.cso" /Od /Zi Shaders\ParticleGeometryShader.hlsl 
+         compilation object save succeeded; see C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\ParticleGeometryShader.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T ps_5_0 /Fo "C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\ParticlePixelShader.cso" /Od /Zi Shaders\ParticlePixelShader.hlsl 
+         compilation object save succeeded; see C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\ParticlePixelShader.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T ps_4_0_level_9_1 /Fo "C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\PixelShader.cso" /Od /Zi Shaders\PixelShader.hlsl 
+         compilation object save succeeded; see C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\PixelShader.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T vs_5_0 /Fo "C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\ParticleVertexShader.cso" /Od /Zi Shaders\ParticleVertexShader.hlsl 
+         compilation object save succeeded; see C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\ParticleVertexShader.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T vs_4_0_level_9_1 /Fo "C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\ShadowVertexShader.cso" /Od /Zi Shaders\ShadowVertexShader.hlsl 
+         compilation object save succeeded; see C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\ShadowVertexShader.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T gs_5_0 /Fo "C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\SpawnPGS.cso" /Od /Zi Shaders\SpawnPGS.hlsl 
+         compilation object save succeeded; see C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\SpawnPGS.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T vs_5_0 /Fo "C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\SpawnPVS.cso" /Od /Zi Shaders\SpawnPVS.hlsl 
+         compilation object save succeeded; see C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\SpawnPVS.cso
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T vs_4_0_level_9_1 /Fo "C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\VertexShader.cso" /Od /Zi Shaders\VertexShader.hlsl 
+         compilation object save succeeded; see C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\VertexShader.cso
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\packages\directxtk_desktop_2013.2015.3.27.2\build\native\../../build/native/include/ /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D HAS_DIRECTXTK /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Bullet.cpp Camera.cpp Emitter.cpp Enemy.cpp GameEntity.cpp GameManager.cpp Material.cpp Mesh.cpp MyDemoGame.cpp dxerr.cpp DirectXGame.cpp GameTimer.cpp OBB.cpp Player.cpp SimpleShader.cpp Terrain.cpp
+         Terrain.cpp
+         SimpleShader.cpp
+         Player.cpp
+         OBB.cpp
+         GameTimer.cpp
+         DirectXGame.cpp
+         dxerr.cpp
+         MyDemoGame.cpp
+     1>c:\users\haplicity\documents\github\starfax\starfax\directx11_starter\mydemogame.cpp(97): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\haplicity\documents\github\starfax\starfax\directx11_starter\mydemogame.cpp(98): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\haplicity\documents\github\starfax\starfax\directx11_starter\mydemogame.cpp(509): warning C4244: 'argument' : conversion from 'LONG' to 'float', possible loss of data
+     1>c:\users\haplicity\documents\github\starfax\starfax\directx11_starter\mydemogame.cpp(533): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\haplicity\documents\github\starfax\starfax\directx11_starter\mydemogame.cpp(535): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\haplicity\documents\github\starfax\starfax\directx11_starter\mydemogame.cpp(560): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\haplicity\documents\github\starfax\starfax\directx11_starter\mydemogame.cpp(561): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+         Mesh.cpp
+         Material.cpp
+         GameManager.cpp
+         GameEntity.cpp
+         Enemy.cpp
+         Emitter.cpp
+         Camera.cpp
+         Bullet.cpp
+         Generating Code...
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D _UNICODE /D UNICODE /l"0x0409" /IC:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\packages\directxtk_desktop_2013.2015.3.27.2\build\native\../../build/native/include/ /nologo /fo"Debug\DirectX11_Starter.res" DirectX11_Starter.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\DirectX11_Starter.exe" /INCREMENTAL /NOLOGO C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\packages\directxtk_desktop_2013.2015.3.27.2\build\native\../../build/native/lib/Win32/Debug/DirectXTKAudioDX.lib C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\packages\directxtk_desktop_2013.2015.3.27.2\build\native\../../build/native/lib/Win32/Debug/DirectXTK.lib d3d11.lib d3dcompiler.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\DirectX11_Starter.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\DirectX11_Starter.lib" /MACHINE:X86 Debug\DirectX11_Starter.res
+         Debug\Bullet.obj
+         Debug\Camera.obj
+         Debug\Emitter.obj
+         Debug\Enemy.obj
+         Debug\GameEntity.obj
+         Debug\GameManager.obj
+         Debug\Material.obj
+         Debug\Mesh.obj
+         Debug\MyDemoGame.obj
+         Debug\dxerr.obj
+         Debug\DirectXGame.obj
+         Debug\GameTimer.obj
+         Debug\OBB.obj
+         Debug\Player.obj
+         Debug\SimpleShader.obj
+         Debug\Terrain.obj
+         DirectX11_Starter.vcxproj -> C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\Debug\DirectX11_Starter.exe
+     1>Done Building Project "C:\Users\Haplicity\Documents\GitHub\StarFax\StarFax\DirectX11_Starter\DirectX11_Starter.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.02
+Time Elapsed 00:00:26.90
